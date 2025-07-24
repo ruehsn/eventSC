@@ -3,9 +3,10 @@
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'eventsc-fix'
+app = 'eventsc'
 primary_region = 'ord'
 console_command = '/rails/bin/rails console'
+swap_size_mb = 512
 
 [build]
 

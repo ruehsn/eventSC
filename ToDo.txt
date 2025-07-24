@@ -1,11 +1,11 @@
 Next Actions
 =================
++ Parent Email 
+  - hide off campus / no Thanks
+  - test trigger working
+
 + Advisor
   + Show = upcoming events shows all student not just advisor
-
-
-+ Seed database
-  + make event date realitve today so don't have to manually update
 
 + Event Creation Form improvements
   -syling
@@ -31,11 +31,7 @@ N+1 Queries
   Student details, 1 for each event 
 
 
-
 Timeline
-6/16: Parent Email template
-Bugleria
-7/14: Email Authentication
 7/21: Auth continued                Staff returning
 7/28: Remove Dangerous Task
 8/04: Prod Deployment
@@ -43,24 +39,16 @@ Bugleria
 8/18: Regession Testing                  Casses Resume
 
 
-9/01: Vehicle / off campus Logs gather
-10/1: Special Views
-11/1: Student Pictures
-12/1: Tranport Drag/drop
+09/01: Vehicle / off campus Logs gather
+10/01: Special Views
+11/01: Student Pictures
+12/01: Tranport Drag/drop
 
 
 Blake Questions
-==================
-^Bad to define style specifics info inside HTML?
-  Unversal classes, apply to all pages?
-  CSS/Tailwind education
-^Git WorkFlow
-  + syncying to laptop
-  + trying something risk and throwing away
+=================
 
-+ Span 5 wide students?
-? Print Report new tab,,,, not obvious new tab launched
-? When to send parent emails...
+
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 TODOs
@@ -72,16 +60,18 @@ TODOs
 + Refactos
    - Event Show page N+1 query
 
-+ Event --> Student Cash View Broken
++ Event        --> Student Cash View Broken
 
-+ New Event --> Clone "Event Option" feature
++ New Event    --> Clone "Event Option" feature
 
-+ Event_signup - Dollar total when selecting
++ Event_signup --> Dollar total when selecting
 
 + Advisor Money Movement report
    - by Event Cash to Student Life, To Office
 
 + Style Improvements
+
++ Parent email - 30 min delay to avoid spamming  
 
 Edge Casses
 + Event with paying options that are not Dinner, will not display nicely on Advisor show Page
@@ -153,3 +143,6 @@ Done!
  ~ get summit working
     ~ rename upcoming_events to event_signup _form
     ~ redirect back to orginal page on submit_event_options_student_path
+
++ Seed database
+  + make event date realitve today so don't have to manually update

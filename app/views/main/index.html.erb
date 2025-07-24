@@ -1,5 +1,11 @@
 <% if Current.user %>
-    <%= button_to "Logout", class: "btn btn-primary" %>
+  <%= button_to "Logout", login_path, method: :delete %>
 <% else %>
-    Not Logged In
+  <p>Not logged in.</p>
+
+  <h4 class="flex justify-center" >Please enter your work email to recieve a login link:</h4>
+  <%= form_with url: login_path, method: :post do |form| %>
+    <%= form.email_field :email, class: "input" %>
+    <%= form.submit "Send me login link", class: "btn" %>
+  <% end %>
 <% end %>
