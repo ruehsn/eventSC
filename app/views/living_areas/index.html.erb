@@ -1,0 +1,16 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Living areas" %>
+
+<h1>Living areas</h1>
+
+<div id="living_areas">
+  <% @living_areas.each do |living_area| %>
+    <%= render living_area %>
+    <p>
+      <%= link_to "Show this living area", living_area %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New living area", new_living_area_path %>

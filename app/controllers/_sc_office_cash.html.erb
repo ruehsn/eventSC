@@ -1,0 +1,26 @@
+<% grouped_cash = @sc_office_cash.includes(:advisor).group_by { |option| option.advisor } %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Advisor</th>
+      <th>Event Option Description</th>
+      <th>Total Cost</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% grouped_cash.each do |advisor, options| %>
+      <% options.each do |option| %>
+        <tr>
+          <td><%= advisor.name if advisor %></td>
+          <td><%= option.description %></td>
+          <td><%= number_to_currency(option.cost) %></td>
+        </tr>
+      <% end %>
+      <tr>
+        <td colspan="2" style="font-weight: bold;">Total for <%= advisor.name if advisor %>:</td>
+        <td style="font-weight: bold;"><%= number_to_currency(options.sum(&:cost)) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

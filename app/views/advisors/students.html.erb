@@ -1,0 +1,13 @@
+<!-- filepath: /mnt/c/Dev/EventSC/app/views/advisors/students.html.erb -->
+<h1>Students for <%= @advisor.first_name %> <%= @advisor.last_name %></h1>
+
+<ul>
+  <% @students.each do |student| %>
+    <li>
+      <%= student.first_name %> <%= student.last_name %> (<%= student.short_name %>)
+      - <%= link_to "Survey for #{Date.today.strftime('%Y-%m')}", survey_path(student_id: student.id, survey_month: Date.today.strftime('%Y-%m')) %>
+    </li>
+  <% end %>
+</ul>
+
+<%= link_to "Back to Advisors", advisors_path %>

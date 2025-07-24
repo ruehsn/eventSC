@@ -1,0 +1,85 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Student Details</h1>
+<table border="1" style="border-collapse: collapse; width: 100%;">
+  <tr>
+    <th>Short Name</th>
+    <td><%= @student.short_name %></td>
+  </tr>
+  <tr>
+    <th>First Name</th>
+    <td><%= @student.first_name %></td>
+  </tr>
+  <tr>
+    <th>Last Name</th>
+    <td><%= @student.last_name %></td>
+  </tr>
+  <tr>
+    <th>Year</th>
+    <td><%= @student.year %></td>
+  </tr>
+  <tr>
+    <th>Gender</th>
+    <td><%= @student.gender %></td>
+  </tr>
+  <tr>
+    <th>Major</th>
+    <td><%= @student.major %></td>
+  </tr>
+  <tr>
+    <th>Notes URL</th>
+    <td>
+      <% if @student.notes_url.present? %>
+        <%= link_to "Notes", @student.notes_url, target: "_blank" %>
+      <% else %>
+        None
+      <% end %>
+    </td>
+  </tr>
+  <tr>
+    <th>Living Area</th>
+    <td><%= @student.living_area.name %></td>
+  </tr>
+</table>
+
+<h2>Advisor:  
+<%= @student.advisor.first_name %> <%= @student.advisor.last_name %><br>
+</h2>
+
+<p>
+  <strong>Parent Email:</strong>
+  <%= @student.parent_email %>
+</p>
+
+<h2>Events Signed Up For</h2>
+<% if @student.student_event_options.any? %>
+  <table border="1" style="border-collapse: collapse; width: 100%;">
+    <thead>
+      <tr>
+        <th>Event Name</th>
+        <th>Date</th>
+        <th>Event Option</th>
+        <th>Cost</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @student.student_event_options.each do |student_event| %>
+        <% if student_event.event_option.present? %>
+          <tr>
+            <td><%= student_event.event.name %></td>
+            <td><%= student_event.event.date.strftime("%A, %B %d, %Y") %></td>
+            <td><%= student_event.event_option.description %></td>
+            <td><%= number_to_currency(student_event.event_option.cost, unit: "$") %></td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>No events signed up for.</p>
+<% end %>
+
+<div>
+  <%= link_to "Edit this student", edit_student_path(@student) %> |
+  <%= link_to "Back to students", students_path %>
+</div>

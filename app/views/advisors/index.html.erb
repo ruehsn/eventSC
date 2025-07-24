@@ -1,0 +1,38 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Advisors" %>
+
+<h1>Advisors</h1>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Advisor Name</th>
+      <th>Students (Short Names)</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @advisors.each do |advisor| %>
+      <tr>
+        <td>
+          <%= link_to "#{advisor.first_name} #{advisor.last_name}", advisor_path(advisor) %>
+        </td>
+        <td class="grid grid-cols-3 gap-x-4">
+          <% if advisor.students.any? %>
+            <% advisor.students.each do |student| %>
+              <span class="text-ellipsis overflow-hidden"><%= student.short_name %></span>
+            <% end %>
+          <% else %>
+            None
+          <% end %>
+        </td>
+        <td>
+          <%= link_to "Edit", edit_advisor_path(advisor) %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to "New advisor", new_advisor_path %>

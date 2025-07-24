@@ -1,0 +1,9 @@
+.event-option {
+  margin-bottom: 0.625rem;
+  border: 1px solid #ccc;
+  padding: 0.625rem;
+}
+
+.event-option label {
+  display: block;
+}

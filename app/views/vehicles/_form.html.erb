@@ -1,0 +1,37 @@
+<%= form_with(model: vehicle) do |form| %>
+  <% if vehicle.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(vehicle.errors.count, "error") %> prohibited this vehicle from being saved:</h2>
+
+      <ul>
+        <% vehicle.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :name, style: "display: block" %>
+    <%= form.textarea :name %>
+  </div>
+
+  <div>
+    <%= form.label :passenger_capacity, style: "display: block" %>
+    <%= form.number_field :passenger_capacity %>
+  </div>
+
+  <div>
+    <%= form.label :working, style: "display: block" %>
+    <%= form.checkbox :working %>
+  </div>
+
+  <div>
+    <%= form.label :note, style: "display: block" %>
+    <%= form.textarea :note %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

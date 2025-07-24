@@ -1,0 +1,47 @@
+<div class="event-option flex flex-wrap gap-2 items-end pb-1">
+  <div>
+    <%= form.label :description, "Description:" %>
+    <%= form.text_field :description, class: "input" %>
+  </div>
+
+  <div>
+    <%= form.label :cost %>
+    <div class="flex items-center">
+      <span class="mr-1">$</span>
+      <%= form.number_field :cost, step: "1", class: "input w-15" %>
+    </div>
+  </div>
+
+  <div>
+    <%= form.label :leave_time %>
+    <%= form.time_field :leave_time, minute_step: 30, class: "input" %>
+  </div>
+
+  <div>
+    <%= form.label :return_time %>
+    <%= form.time_field :return_time, minute_step: 30, class: "input" %>
+  </div>
+
+  <div class="w-full"></div>
+
+  <div class="flex items-center space-x-2">
+    <%= form.check_box :office_holds_cash %>
+    <%= form.label :office_holds_cash %>
+  </div>
+
+  <div class="flex items-center space-x-2">
+    <%= form.check_box :transportation_required %>
+    <%= form.label :transportation_required %>
+  </div>
+  
+  <div class="w-full"></div>
+
+  <div>
+    <%= form.hidden_field :_destroy %>
+    <button type="button" 
+            data-action="click->event-options#remove" 
+            class="btn-destructive">
+      Remove Option
+    </button>
+  </div>
+</div>

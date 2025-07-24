@@ -1,0 +1,17 @@
+{
+
+  "tailwindCSS.includeLanguages": {
+  "html": "html",
+  "erb": "html", 
+  "ruby": "html",  
+  "javascript": "javascript"
+},
+"tailwindCSS.experimental.classRegex": [
+  "class: \"|'([^\"']*)"
+],
+
+// "files.associations": {
+//   "*.html.erb": "erb"
+// }
+
+}

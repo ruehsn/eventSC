@@ -1,0 +1,6 @@
+<% @event_options.each do |event_option| %>
+    <div>
+      <%= check_box_tag "event_option_ids[]", event_option.id %>
+      <%= label_tag "event_option_ids_#{event_option.id}", "#{event_option.description} $#{event_option.cost}" %>
+    </div>
+  <% end %>

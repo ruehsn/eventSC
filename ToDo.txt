@@ -1,0 +1,155 @@
+Next Actions
+=================
++ Advisor
+  + Show = upcoming events shows all student not just advisor
+
+
++ Seed database
+  + make event date realitve today so don't have to manually update
+
++ Event Creation Form improvements
+  -syling
+  -compact Options discription
+  + first event time default rest of the date/time
+  + No Thanks, off campus check boxes
+
++ Survey Removal
+  -Sudent Event Selection Page create 2 section:
+    -Upcoming Event not yet selected
+    -Upcomign Events already selected
+
++ Student Show
+  - split Events by upcoming / Past
+  - fix avisor name
+
++ Edit Student Page
+ + advisor drop down
+ + styling
+
+
+N+1 Queries
+  Student details, 1 for each event 
+
+
+
+Timeline
+6/16: Parent Email template
+Bugleria
+7/14: Email Authentication
+7/21: Auth continued                Staff returning
+7/28: Remove Dangerous Task
+8/04: Prod Deployment
+8/11: Data Migration / Bulk Tool
+8/18: Regession Testing                  Casses Resume
+
+
+9/01: Vehicle / off campus Logs gather
+10/1: Special Views
+11/1: Student Pictures
+12/1: Tranport Drag/drop
+
+
+Blake Questions
+==================
+^Bad to define style specifics info inside HTML?
+  Unversal classes, apply to all pages?
+  CSS/Tailwind education
+^Git WorkFlow
+  + syncying to laptop
+  + trying something risk and throwing away
+
++ Span 5 wide students?
+? Print Report new tab,,,, not obvious new tab launched
+? When to send parent emails...
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+TODOs
+================
+ +Add Events needing a respons on
+    + Advisor Page index page totall accross all students
+    + Events by Student advisor Page
+
++ Refactos
+   - Event Show page N+1 query
+
++ Event --> Student Cash View Broken
+
++ New Event --> Clone "Event Option" feature
+
++ Event_signup - Dollar total when selecting
+
++ Advisor Money Movement report
+   - by Event Cash to Student Life, To Office
+
++ Style Improvements
+
+Edge Casses
++ Event with paying options that are not Dinner, will not display nicely on Advisor show Page
+
++Offcampus Log Scrap
+  https://docs.google.com/spreadsheets/d/1JGvvQBJPvg0okSZHi19hJsPHC2rw6DpZN9p3zW1eiMs/gviz/tq?tqx=out:csv&sheet=09-08
+
+
++ Gather Off Campus Logs
+
++ Parent Email
+
++ Move 'Dangerous' Actions to another section
+  - Edit/delete students
+  - Edit/Delete Events
+  -
++ Authentication Email Magic Links
+  - https://railsdesigner.com/saas/magic-links-for-rails-authentication/
+  - Limit to shepherds' domain
+  - long lasting 90 day expire token
+  - sign out button
+
++ Locked Event Feature
+  - Event can be marked as "Locked"
+  - Advisor can't make changes to student
+  - Heather still has override power
+
+
++ Future / Past Event display
+
++ Special Views
+  - Haircut, list by year 1,2,3
+  - no transport
+  - just list of those going or no
+
+==================================
+
++ Bulk student update?
+  - pull data from blackbaud API ?
+
++ Student Pictures
+
++ Transportation Assignment page
+
++ Student report page
+  - all event student signed up for
+  - Total Spent
+  - filter only future events?
+
+
+
+
+
+
+
+
+
+
+Done!
+=================
++ Event result page
+  - Student spit by living area
+  - totals for each catgory
++ Avisors student col line up
+
+- Detect incomplete Survey, or missing students
++ Seed TDF for large Event signup
+
+ ~ get summit working
+    ~ rename upcoming_events to event_signup _form
+    ~ redirect back to orginal page on submit_event_options_student_path

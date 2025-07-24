@@ -1,0 +1,36 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th>Event Date (Event Name)</th>
+      <th>Summary of Signups</th>
+      <th>Missing Students</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% events.each do |event| %>
+      <tr>
+        <!-- Event Date with Day of Week and Name -->
+        <td>
+         <%= link_to event.date.strftime("%B %e (%a)")+ " "+ event.name, event_path(event) %> 
+        </td>
+
+        <!-- Summary of Signups -->
+        <td>
+        <ul>
+          <% event_summary = event.event_options.map do |option| %>
+            <li><%= "#{option.description}: #{StudentEventOption.where(event_option_id: option.id).count}" %> </li>
+          <% end %>
+        </ul>
+        </td>
+  <!-- Missing Students -->
+        <td>
+          <% total_students = Student.count %>
+          <% signed_up_students = StudentEventOption.where(event_id: event.id).distinct.count(:student_id) %>
+          <%= total_students - signed_up_students %>
+        </td>
+
+      
+        </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -1,0 +1,27 @@
+<%= form_with(model: living_area) do |form| %>
+  <% if living_area.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(living_area.errors.count, "error") %> prohibited this living_area from being saved:</h2>
+
+      <ul>
+        <% living_area.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :name, style: "display: block" %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div>
+    <%= form.label :description, style: "display: block" %>
+    <%= form.textarea :description %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

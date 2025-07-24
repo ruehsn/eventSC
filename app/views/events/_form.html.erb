@@ -1,0 +1,59 @@
+<%= form_with(model: @event, local: true) do |form| %>
+  <% if @event.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(@event.errors.count, "error") %> prohibited this event from being saved:</h2>
+      <ul>
+        <% @event.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="flex items-center gap-4">
+    <div>
+      <%= form.label :date, "Date:", class: "block" %>
+      <%= form.date_field :date, value: Date.today, class: "input w-auto" %>
+    </div>
+
+    <div>
+      <%= form.label :name, "Name:", class: "block" %>
+      <%= form.text_field :name, class: "input" %>
+    </div>
+  </div>
+
+  <div data-controller="event-options">
+    <h3>Event Options</h3>
+    <div data-event-options-target="container">
+      <%= form.fields_for :event_options do |option_form| %>
+        <%= render "event_option_fields", form: option_form %>
+      <% end %>
+    </div>
+
+    <template data-event-options-target="template">
+      <%= form.fields_for :event_options, EventOption.new, child_index: "NEW_RECORD" do |option_form| %>
+        <%= render "event_option_fields", form: option_form %>
+      <% end %>
+    </template>
+
+    <button type="button" 
+            data-action="click->event-options#add"
+            class="btn-secondary">
+      Add Another Option
+    </button>
+  </div>
+
+  <div>
+    <h3>Default Options:</h3> 
+    <%= form.check_box :no_thanks, { checked: true }, true, false %>
+    <%= form.label :no_thanks, "No, Thanks" %>
+    <%= form.check_box :off_campus, { checked: true }, true, false %>
+    <%= form.label :off_campus, "Off Campus" %>
+  </div>
+
+  <div>
+    <%= form.submit class: "btn" %>
+  </div>
+<% end %>
+
+

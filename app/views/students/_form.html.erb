@@ -1,0 +1,83 @@
+<%= form_with(model: @student, local: true) do |form| %>
+  <% if @student.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@student.errors.count, "error") %> prohibited this student from being saved:</h2>
+      <ul>
+        <% @student.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :short_name %>
+    <%= form.text_field :short_name, class: "input"%>
+  </div>
+
+  <div>
+    <%= form.label :first_name %>
+    <%= form.text_field :first_name, class: "input" %>
+  </div>
+
+  <div>
+    <%= form.label :last_name %>
+    <%= form.text_field :last_name, class: "input" %>
+  </div>
+
+  <div>
+    <%= form.label :notes_url %>
+    <%= form.url_field :notes_url, class: "input" %>
+  </div>
+
+  <div>
+    <%= form.label :living_area_id, {class: "label"} %>
+    <%= form.collection_select :living_area_id, LivingArea.all, :id, :name, { prompt: "Select a living area" },
+      { class: "select w-[180px]" } %>
+  </div>
+
+  <div>
+    <%= form.label :advisor_id %>
+    <%= form.collection_select :advisor_id, Advisor.all, :id, :last_name, { prompt: "Select an advisor" }, 
+      { class: "select w-[180px]" } %>
+  </div>
+
+  <div>
+    <%= form.label "Expected graduation year:" %>
+    <%= form.number_field :year, class:"select w-[180px]", value: Date.today.year+3 %>
+  </div>
+
+  <div>
+    <%= form.label :gender %><br>
+    <%= form.radio_button :gender, 'M' %>
+    <%= form.label :gender_male, 'M' %>
+    <%= form.radio_button :gender, 'F' %>
+    <%= form.label :gender_female, 'F' %>
+  </div>
+
+  <div>
+    <%= form.label :major %><br>
+    <%= form.radio_button :major, 'Hort' %>
+    <%= form.label :major_hort, 'Hort' %>
+    <%= form.radio_button :major, 'CA' %>
+    <%= form.label :major_ca, 'CA' %>
+    <%= form.radio_button :major, 'Tech' %>
+    <%= form.label :major_tech, 'Tech' %>
+    <%= form.radio_button :major, 'Hospitality' %>
+    <%= form.label :major_hospitality, 'Hospitality' %>
+  </div>
+
+  <div>
+    <%= form.label :student_life_holds_cash, "Student Life Holds Cash?" %>
+    <%= form.check_box :student_life_holds_cash %>
+  </div>
+
+  <div class="field">
+    <%= form.label :parent_email, "Parent Email" %>
+    <%= form.email_field :parent_email, class: "input" %>
+  </div>
+
+  <div>
+    <%= form.submit class: "btn" %>
+  </div>
+<% end %>

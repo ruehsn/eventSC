@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @living_area %>
+
+<div>
+  <%= link_to "Edit this living area", edit_living_area_path(@living_area) %> |
+  <%= link_to "Back to living areas", living_areas_path %>
+
+  <%= button_to "Destroy this living area", @living_area, method: :delete %>
+</div>

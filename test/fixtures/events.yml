@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: Event 1
+  date: 2025-04-10
+  survey_month: 2025-04-01
+
+two:
+  name: Event 2
+  date: 2025-05-10
+  survey_month: 2025-05-01

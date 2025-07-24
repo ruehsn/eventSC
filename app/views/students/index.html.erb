@@ -1,0 +1,39 @@
+<p class="text-green-500 "><%= notice %></p>
+
+<% content_for :title, "Students" %>
+<table class="table" >
+  <thead>
+    <tr>
+      <th>Short Name</th>
+      <th>Living Area</th>
+      <th>Advisor</th>
+      <th>Year</th>
+      <th>Gender</th>
+      <th>Major</th>
+      <th>Current Survey</th>
+      <th>Details</th>
+      <th>Parent Email</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @students.each do |student| %>
+      <tr class="odd:bg-gray-200 dark:odd:bg-gray-800">
+        <td><%= student.short_name %></td>
+        <td><%= student.living_area.name %></td>
+        <td><%= student.advisor.first_name %> <%= student.advisor.last_name %></td>
+        <td><%= student.year %></td>
+        <td><%= student.gender %></td>
+        <td><%= student.major %></td>
+        <td>
+          <%= link_to "Edit event selection", event_signup_student_path(student) %>
+        </td>
+        <td>
+          <%= link_to "Student Details", student_path(student) %> <!-- Link to the show action -->
+        </td>
+        <td><%= student.parent_email %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to "New student", new_student_path %>

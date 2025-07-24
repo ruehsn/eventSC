@@ -1,0 +1,14 @@
+<div class="event-header">
+  <h1>Cash to students for <%= @event.name %> on <%= @event.date.strftime('%B %d, %Y') %> </h1>
+  
+</div>
+
+<div class="cash-office-section">
+  <%= render partial: 'events/cash_by_advisor', 
+             locals: { student_list: @event.cash_to_students(@advisor_id)
+                                          .group_by { |student| student.event_option_description }
+                                          .transform_values { |students| students.group_by(&:advisor) } } %></div>
+
+<div class="actions">
+  <%= link_to "Back to Event", event_path(@event), class: "button" %>
+</div>

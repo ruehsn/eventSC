@@ -1,0 +1,13 @@
+<h2>Sign in with Magic Link</h2>
+
+<%= form_with model: @signup, url: magic_signups_path do |form| %>
+  <%= form.email_field :email_address,
+      required: true,
+      autofocus: true,
+      autocomplete: "username",
+      placeholder: "Enter your email address" %><br>
+
+  <%= invisible_captcha %>
+
+  <%= form.submit "Sign up" %>
+<% end %>

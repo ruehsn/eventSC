@@ -1,0 +1,79 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Event: <%= @event.name %> <p> <%= @event.date %></p></h1>
+
+
+<h2>Students Grouped by Living Area </h2>
+
+<% if LivingArea.any? || @missing_students.any? %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Living Area</th>
+        <% @students_by_living_area_and_option.keys.map(&:last).uniq.sort_by(&:id).each do |event_option| %>
+          <th><%= event_option.description %> <%= display_event_option_cost(event_option)%> </th>
+        <% end %>
+        <% if @missing_students.any? %> <th>Missing Students</th> <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% LivingArea.all.each do |living_area| %>
+        <tr class="odd:bg-gray-200 dark:odd:bg-gray-800">
+          <td><%= living_area.name %></td>
+          <% @students_by_living_area_and_option.keys.map(&:last).uniq.each do |event_option| %>
+            <td>
+              <div class="grid gap-x-4" style="grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));">
+                <% students = @students_by_living_area_and_option[[living_area, event_option]] %>
+                <% if students.present? %>
+                    <% students.each do |student_event| %>
+                      <% if student_event.student.notes_url.present? %>
+                        <span class="whitespace-nowrap"> <%= link_to "#{student_event.student.short_name}", student_event.student.notes_url, target: "_blank" %> </span>
+                      <% else %>
+                        <span class="whitespace-nowrap"><%= student_event.student.short_name %> </span>
+                      <% end %>
+                    <% end %>
+                <% end %>
+              </div>
+            </td>
+          <% end %>
+            <% if @missing_students.any? %>
+            <td> <% missing_students = @missing_students.select { |student| student.living_area == living_area } %>
+            <% if missing_students.present? %>
+              <ol>
+                <% missing_students.each do |student| %>
+                  <li><%= student.short_name%> </li>
+                <% end %>
+              </ol>
+            <% end %>
+            </td>
+        <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Total</th>
+        <% @students_by_living_area_and_option.keys.map(&:last).uniq.each do |event_option| %>
+          <th>
+            <% total_students = @students_by_living_area_and_option.select { |(_, eo), _| eo == event_option }.values.flatten.size %>
+            <%= total_students %>
+          </th>
+        <% end %>
+          <% if @missing_students.any? %> <th> <%= @missing_students.size %> </th> <% end %>
+      </tr>
+    </tfoot>
+  </table>
+
+  <p>No students have signed up for this event yet.</p>
+<% end %>
+
+<h2>
+  <%= link_to "Cash to SC Office:", cash_office_event_path(@event), target: "_blank"  %>
+  <%= number_to_currency(@total_sc_office_cash, unit: "$") %>
+</h2>
+
+
+<h2>
+  <%= link_to "Cash to Students:", student_cash_event_path(@event), target: "_blank"  %>
+  <%= number_to_currency(@total_student_cash, unit: "$") %>
+</h2>

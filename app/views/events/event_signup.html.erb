@@ -1,0 +1,32 @@
+<div class="container mx-auto px-4">
+  <h1 class="text-2xl font-bold mb-4">
+    Upcoming Events for <%= @student.first_name %> <%= @student.last_name %>
+  </h1>
+
+  <%= form_with url: submit_event_options_student_path(@student), method: :post, local: true do %>
+    <div class="space-y-8">
+      <% @upcoming_events.each do |event| %>
+        <div class="bg-white shadow rounded-lg p-6">
+          <h3 class="text-lg font-semibold mb-4">
+            <%= event.name %> - <%= event.date.strftime("%A, %B %d, %Y") %>
+          </h3>
+          <div class="space-y-2">
+            <% event.event_options.each do |option| %>
+              <div class="flex items-center space-x-2">
+                <%= radio_button_tag "event_options[#{event.id}]", option.id, @selected_options.include?(option.id), id: "event_#{event.id}_option_#{option.id}" %>
+                <%= label_tag "event_#{event.id}_option_#{option.id}", "#{option.description} (#{number_to_currency(option.cost, unit: '$')})" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <div class="mt-6">
+      <%= submit_tag "Save Selections", class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700" %>
+    </div>
+  <% end %>
+
+  <div class="mt-6">
+    <%= link_to "Back to Student", student_path(@student), class: "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700" %>
+  </div>
+</div>

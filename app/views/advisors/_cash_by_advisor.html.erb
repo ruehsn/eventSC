@@ -1,0 +1,51 @@
+<!-- testing -->
+
+<table class="table">
+  <thead>
+    <tr>
+      <th class="text-center px-4">Event Option</th>
+      <th class="text-center px-4">Advisor</th>
+      <th class="text-center px-4">Total Cost</th>
+      <th class="text-center px-4">Students</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% student_list.each do |event_option, options| %>
+      <% if options.is_a?(Hash) %>
+        <% advisor_count = options.keys.count %>
+        <% options.each_with_index do |(advisor, students), index| %>
+          <tr class="<%= index.even? ? 'bg-white' : 'bg-gray-200' %>">
+            <% if index == 0 %>
+              <td rowspan="<%= advisor_count %>">
+                <%= event_option %> 
+                (<%= number_to_currency(students.first.event_option_cost, unit: "$") %>)
+              </td>
+            <% end %>
+            <td><%= advisor.last_name %></td>
+            <td><%= number_to_currency(students.sum(&:event_option_cost), unit: "$") %></td>
+            <td class="grid grid-cols-4 gap-x-4">
+              <% students.each do |student| %>
+                <span class="inline-block px-2 py-1 m-1 bg-gray-100 rounded">
+                  <%= student.short_name %>
+                </span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      <% else # Array case %>
+        <tr>
+          <td><%= event_option %></td>
+          <td><%= @advisor&.last_name %></td>
+          <td><%= number_to_currency(options.sum(&:event_option_cost), unit: "$") %></td>
+          <td class="grid grid-cols-4 gap-x-4">
+            <% options.each do |student| %>
+              <span class="inline-block px-2 py-1 m-1 bg-gray-100 rounded">
+                <%= student.short_name %>
+              </span>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>

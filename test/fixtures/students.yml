@@ -1,0 +1,62 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+DEFAULTS: &student_defaults
+  first_name: "MyString"
+  last_name: "MyString"
+  notes_url: "MyString"
+  living_area: one
+  advisor: one
+  year: 2
+  gender: "M"
+  major: "EE"
+
+# xx_event_opion
+#    F = free  
+#    O = Office Event
+#    S = Student event
+
+
+#SL_   student life holds cash 
+SL_F:
+  <<: *student_defaults
+  short_name: "SL_F"
+  student_life_holds_cash: true
+
+SL_O:
+  <<: *student_defaults
+  short_name: "SL_O"
+  student_life_holds_cash: true
+
+SL_S:
+  <<: *student_defaults
+  short_name: "SL_S"
+  student_life_holds_cash: true
+
+#S_    office holds cash
+S_F:
+  <<: *student_defaults
+  short_name: "S_F"
+  student_life_holds_cash: false
+
+S_O:
+  <<: *student_defaults
+  short_name: "S_O"
+  student_life_holds_cash: false
+
+S_S:
+  <<: *student_defaults
+  short_name: "S_S"
+  student_life_holds_cash: false
+
+#---------- advisor two to test advisor specific queries ------------
+SL_S2:
+  <<: *student_defaults
+  short_name: "SL_S2"
+  advisor: two
+  student_life_holds_cash: true
+
+S_S2:
+  <<: *student_defaults
+  short_name: "S_S2"
+  advisor: two
+  student_life_holds_cash: false

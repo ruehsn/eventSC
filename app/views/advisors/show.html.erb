@@ -1,0 +1,93 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @advisor %>
+
+<div>
+  <%= link_to "Edit this advisor", edit_advisor_path(@advisor) %> |
+  <%= link_to "Back to advisors", advisors_path %>
+</div>
+
+<h2> Assigned Students</h2>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Full Name</th>
+      <th>Event Signup</th>
+      <th>Events Not Selected</th>
+      <th>Year</th>
+      <th>Living Area</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @advisor.students.each do |student| %>
+      <tr>
+        <td><%= student.first_name %> <%= student.last_name %></td>
+        <td><%= link_to "Event Signup", event_signup_student_path(student) %></td>
+        <td>
+          <% total_upcoming = Event.upcoming.count %>
+          <% selected = student.student_event_options.where(event_id: Event.upcoming.pluck(:id)).count %>
+          <%= total_upcoming - selected %>
+        </td>
+        <td><%= student.year %></td>
+        <td><%= student.living_area&.name %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br />
+<h2 class="space-x-2">Up Comming Event:</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Event</th>
+      <th>Event Option</th>
+      <th>Cost</th>
+      <th>Students</th>
+      <th>Total to SC Office</th>
+      <th>Total Cash to Student</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @upcoming_events.each do |event| %>
+      <% event_options_with_students = event.event_options.select { |eo| eo.student_event_options.any? } %>
+      <% event_options_with_students.each_with_index do |event_option, index| %>
+          <tr>
+            <% if index == 0 %>
+              <td rowspan="<%= event_options_with_students.size %>">
+                <%= event.name %> on <%= event.date.strftime("%A, %B %d, %Y") %>
+              </td>
+            <% end %>
+            <td><%= event_option.description %></td>
+            <td><%= display_event_option_cost(event_option) %></td>
+            <td class="grid grid-cols-3 gap-x-4">
+              <% event_option.student_event_options.each do |seo| %>
+                <span class="<%= (seo.student.student_life_holds_cash && !event_option.office_holds_cash) ? 'bg-green-200' : '' %>">
+                  <%= seo.student.short_name %>
+                </span>
+              <% end %>
+            </td>
+            <% if index == 0 %>
+              <td rowspan="<%= event_options_with_students.size %>">
+                <% total_sc_office = event.cash_to_sc_office(@advisor.id).sum { |student| student.event_option_cost } %>
+                <%= link_to number_to_currency(total_sc_office, unit: "$"), 
+                    cash_office_event_path(event, advisor_id: @advisor.id), 
+                    target: "_blank", 
+                    rel: "noopener", 
+                    class: "text-blue-600 underline" %>
+              </td>
+              <td rowspan="<%= event_options_with_students.size %>">
+                <% total_cash_student = event.cash_to_students(@advisor.id).sum { |student| student.event_option_cost } %>
+                <%= link_to number_to_currency(total_cash_student, unit: "$"), 
+                    student_cash_event_path(event, advisor_id: @advisor.id), 
+                    target: "_blank", 
+                    rel: "noopener", 
+                    class: "text-blue-600 underline" %>
+              </td>
+            <% end %>
+          </tr>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>

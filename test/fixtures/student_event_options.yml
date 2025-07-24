@@ -1,0 +1,40 @@
+    seo_sl_s:
+      event: one
+      event_option: eo_S
+      student: SL_S
+
+    seo_sl_f:
+      event: one
+      event_option: free
+      student: SL_F
+
+    seo_sl_o:
+      event: one
+      event_option: eo_O
+      student: SL_O
+
+    seo_s_o:
+      event: one
+      event_option: eo_O
+      student: S_O
+
+    seo_s_s:
+      event: one
+      event_option: eo_S
+      student: S_S
+
+    seo_s_f:
+      event: one
+      event_option: free
+      student: S_F
+
+# advisor two to test advisor specific queries
+    seo_SL_S2:
+      event: one
+      event_option: eo_S
+      student: SL_S2
+
+    seo_S_S2:
+      event: one
+      event_option: eo_S
+      student: S_S2

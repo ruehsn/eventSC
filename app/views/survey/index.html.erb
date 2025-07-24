@@ -1,0 +1,22 @@
+<% if flash[:notice] %>
+  <p class="notice"><%= flash[:notice] %></p>
+<% end %>
+
+<h1>Events selections for <%= @student.first_name %>  <%=@student.last_name %> </h1>
+
+<%= form_with url: survey_submit_path, method: :post do %>
+  <%= hidden_field_tag :student_id, params[:student_id] %>
+  <% @events.each do |event| %>
+    <div class="border-2 p-4 mb-4">
+    <h2><%= event.date.strftime("%A, %B %e") %> (<%= event.name %>) </h2>
+        <% event.event_options.each do |option| %>
+          <%= radio_button_tag "event_option_ids[#{event.id}]", option.id, @student.event_options.include?(option), class: 'input'%>
+          <%= label_tag "event_option_ids_#{option.id}", "#{option.description} #{display_event_option_cost(option)}"%> <br />
+        <% end %>
+    </div>
+  <% end %>
+
+
+<br />
+  <%= submit_tag "Update Event Choices", class: 'btn' %>
+<% end %>

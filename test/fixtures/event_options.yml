@@ -1,0 +1,22 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+eo_O:
+  description: "event with cost managed by office"
+  cost: 100.00
+  event: one
+  office_holds_cash: true
+  transportation_required: false
+
+eo_S:
+  description: "event with cost, cash given to students"
+  cost: 200.00
+  event: one
+  office_holds_cash: false
+  transportation_required: true
+
+free:
+  description: "free event"
+  cost: 0
+  event: one
+  office_holds_cash: false
+  transportation_required: false
