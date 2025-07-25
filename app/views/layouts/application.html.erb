@@ -24,21 +24,27 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <% if logged_in? %>
+<% if logged_in? %>
   <body>
-    <nav class="bg-gray-50 dark:bg-gray-900 p-3 border-b">
-      <div class="flex gap-4 justify-center items-center">
-        <a href="<%= students_path %>">All Students</a>
-        <a href="<%= advisors_path %>">Advisors</a>
-        <a href="<%= events_path %>">Events</a>
-      </div>
-
-      <div class="ml-auto">
-        <%= button_to "Logout", login_path, method: :delete, class: "px-2 py-1 bg-red-300 text-white rounded" %>
+  <nav class="bg-gray-50 dark:bg-gray-900 p-3 border-b">
+    <div class="flex items-center justify-between">
+      <!-- Left empty space for balance -->
+      <div class="w-24"></div>
+      
+      <!-- Centered navigation links -->
+      <div class="flex gap-4 items-center justify-center">
+        <a href="<%= students_path %>" class="hover:text-gray-600">All Students</a>
+        <a href="<%= advisors_path %>" class="hover:text-gray-600">Advisors</a>
+        <a href="<%= events_path %>" class="hover:text-gray-600">Events</a>
       </div>
       
-    </nav>
-  <% end %>
+      <!-- Right-aligned logout button -->
+      <div class="w-24 flex justify-end">
+        <%= button_to "Logout", login_path, method: :delete, class: "px-2 py-1 bg-red-300 hover:bg-red-400 text-white rounded" %>
+      </div>
+    </div>
+  </nav>
+<% end %>
 
     <div class="container mx-auto px-4">
       <%= yield %>

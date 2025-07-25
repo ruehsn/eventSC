@@ -3,8 +3,12 @@ class LoginsController < ApplicationController
 
   def show
     user = User.find_by_token_for(:magic_login, params[:token])
-    login(user) if user.present?
-    redirect_to root_path #, alert: "Invalid or expired login link." unless user
+    if user.present?
+      login(user)
+      redirect_to root_path
+    else
+      redirect_to root_path, alert: "Invalid or expired login link."
+    end
   end
 
   def create
