@@ -17,8 +17,8 @@
         <!-- Summary of Signups -->
         <td>
         <ul>
-          <% event_summary = event.event_options.map do |option| %>
-            <li><%= "#{option.description}: #{StudentEventOption.where(event_option_id: option.id).count}" %> </li>
+          <% event.event_options.each do |option| %>
+            <li><%= "#{option.description}: #{option.student_event_options.count}" %> </li>
           <% end %>
         </ul>
         </td>

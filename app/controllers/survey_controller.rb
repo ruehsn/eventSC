@@ -1,8 +1,8 @@
 class SurveyController < ApplicationController
   def index
     @survey_month  = params[:survey_month] || Date.today.strftime("%Y-%m")
-    @student = Student.find(params[:student_id])
-    @events  = Event.where(survey_month: @survey_month)
+    @student = Student.includes(:event_options).find(params[:student_id])
+    @events  = Event.where(survey_month: @survey_month).includes(:event_options)
   end
 
   def submit

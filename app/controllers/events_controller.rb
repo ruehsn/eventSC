@@ -3,7 +3,7 @@ class EventsController < ApplicationController
 
   # GET /events or /events.json
   def index
-    @events = Event.includes(:event_options)
+    @events = Event.includes(event_options: :student_event_options)
   end
 
   # GET /events/1 or /events/1.json
@@ -12,7 +12,7 @@ class EventsController < ApplicationController
     @students_by_living_area_and_option = @event.student_event_options
         .includes({student: :living_area}, :event_option)
         .group_by { |se| [se.student.living_area, se.event_option] }
-    @missing_students = Student.where.not(id: @event.students.pluck(:id))
+    @missing_students = Student.includes(:living_area).where.not(id: @event.students.pluck(:id))
 
     @total_sc_office_cash = @event.cash_to_sc_office.sum { |student| student.event_option_cost }
     @total_student_cash   = @event.cash_to_students.sum { |student| student.event_option_cost }

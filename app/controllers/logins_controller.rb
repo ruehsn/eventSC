@@ -1,5 +1,5 @@
 class LoginsController < ApplicationController
-  skip_before_action :require_login, only: [:show, :destroy, :create]
+  skip_before_action :require_login, only: [:show, :destroy, :create, :dev_login]
 
   def show
     user = User.find_by_token_for(:magic_login, params[:token])
@@ -13,14 +13,43 @@ class LoginsController < ApplicationController
 
   def create
     email = params[:email].to_s.strip.downcase
-    unless email.ends_with?('@shepherdscollege.edu')
+    
+    # Development bypass - directly login without magic link
+    if Rails.env.development? && params[:dev_bypass] == 'true'
+      user = User.find_or_create_by(email: email)
+      login(user)
+      redirect_to root_path, notice: "Development bypass: Logged in as #{email}"
+      return
+    end
+    
+    # In development, be more lenient with email validation
+    unless Rails.env.development? || email.ends_with?('@shepherdscollege.edu')
       redirect_to login_path, notice: "Invalid email, reminder to use your work email address are allowed." 
       return
     end
 
     user = User.find_or_create_by(email: params[:email])
-    UserMailer.with(user: user).login.deliver_now if user.present?
-    redirect_to root_path, notice: "Check your email to login."
+    
+    # In development, provide option to skip email sending
+    if Rails.env.development? && Rails.application.config.respond_to?(:skip_magic_link_emails) && Rails.application.config.skip_magic_link_emails
+      login(user)
+      redirect_to root_path, notice: "Development: Logged in directly as #{email}"
+    else
+      UserMailer.with(user: user).login.deliver_now if user.present?
+      redirect_to root_path, notice: "Check your email to login."
+    end
+  end
+
+  # Development only route for quick login
+  def dev_login
+    if Rails.env.development?
+      email = params[:email] || 'dev@shepherdscollege.edu'
+      user = User.find_or_create_by(email: email)
+      login(user)
+      redirect_to root_path, notice: "Development login: Logged in as #{email}"
+    else
+      redirect_to root_path, alert: "Development login not available in this environment."
+    end
   end
 
   def destroy

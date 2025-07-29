@@ -5,7 +5,32 @@
 
   <h4 class="flex justify-center" >Please enter your work email to recieve a login link:</h4>
   <%= form_with url: login_path, method: :post do |form| %>
+
+
     <%= form.email_field :email, class: "input" %>
+    
+    <% if Rails.env.development? %>
+      <div class="mt-2">
+        <%= form.check_box :dev_bypass, { checked: false }, "true", "false" %>
+        <%= form.label :dev_bypass, "Development Bypass (skip email)", class: "text-sm text-gray-600" %>
+      </div>
+    <% end %>
+    
     <%= form.submit "Send me login link", class: "btn" %>
+  <% end %>
+
+  <% if Rails.env.development? %>
+    <div class="mt-4 p-4 bg-yellow-100 border border-yellow-400 rounded">
+      <h5 class="font-semibold text-yellow-800">Development Quick Login:</h5>
+      <div class="mt-2 space-x-2">
+        <%= link_to "Login as dev@shepherdscollege.edu", dev_login_login_path, 
+            class: "btn btn-sm bg-yellow-500 hover:bg-yellow-600 text-white" %>
+        <%= link_to "Login as admin@shepherdscollege.edu", dev_login_login_path(email: 'admin@shepherdscollege.edu'), 
+            class: "btn btn-sm bg-yellow-500 hover:bg-yellow-600 text-white" %>
+      </div>
+      <% if skip_magic_link_emails? %>
+        <p class="text-xs text-yellow-700 mt-2">Magic link emails are disabled in development.</p>
+      <% end %>
+    </div>
   <% end %>
 <% end %>

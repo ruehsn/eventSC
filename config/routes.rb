@@ -22,7 +22,14 @@ Rails.application.routes.draw do
     end
   end
   resources :survey, only: [:index, :show]
-  resource :login, only: [:show, :destroy, :create]
+  resource :login, only: [:show, :destroy, :create] do
+    # Development only route
+    get :dev_login, on: :collection if Rails.env.development?
+  end
+  
+  # Admin user management
+  resources :users, only: [:index, :show, :create, :update, :destroy]
+  
   root "main#index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

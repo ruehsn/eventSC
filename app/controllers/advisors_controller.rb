@@ -3,17 +3,18 @@ class AdvisorsController < ApplicationController
 
   # GET /advisors or /advisors.json
   def index
-    @advisors = Advisor.all
+    @advisors = Advisor.includes(:students).all
   end
 
   # GET /advisors/1 or /advisors/1.json
   def show
-    @advisor = Advisor.find(params[:id])
+    @advisor = Advisor.includes(students: :student_event_options).find(params[:id])
     @upcoming_events = Event.upcoming
                          .joins(:event_options)
                          .merge(EventOption.yes_options)
-                         .includes(:event_options)
+                         .includes(event_options: :student_event_options)
                          .distinct
+    @upcoming_event_ids = Event.upcoming.pluck(:id) # Cache this for use in view
   end
 
   # GET /advisors/new

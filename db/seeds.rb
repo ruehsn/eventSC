@@ -11,11 +11,25 @@ require 'csv'
 
 puts "Seeding database..."
 
+# Create development users in development environment first
+if Rails.env.development?
+  puts "Creating development users..."
+  dev_user = User.find_or_create_by(email: 'dev@shepherdscollege.edu')
+  admin_user = User.find_or_create_by(email: 'admin@shepherdscollege.edu')
+  test_user = User.find_or_create_by(email: 'test@shepherdscollege.edu')
+  
+  # Make the admin user an admin
+  admin_user.update!(is_admin: true)
+  puts "Development users created! Admin: #{admin_user.email}"
+end
+
+# Clear existing data (but preserve users) - order matters due to foreign keys
+StudentEventOption.delete_all  # Delete join table records first
 EventOption.delete_all
 Event.delete_all
-LivingArea.delete_all
-Student.delete_all
+Student.delete_all  # Delete students first since they reference advisors and living areas
 Advisor.delete_all
+LivingArea.delete_all
 
 "Anderson|Bakovka|Calabrese|Tarwater|McCoy|Sliwinski|Kapity".split("|").each do |name|
     Advisor.find_or_create_by(last_name: name)

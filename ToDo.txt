@@ -1,9 +1,25 @@
+Timeline
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+7/28: Remove Dangerous Task
+8/04: Prod Deployment
+8/11: Data Migration / Bulk Tool
+8/18: Regession Testing                  Casses Resume
+
+
+09/01: Vehicle / off campus Logs gather
+10/01: Special Views
+11/01: Student Pictures
+12/01: Tranport Drag/drop
+
+
+Blake Questions
+=================
+
+
+
+
 Next Actions
 =================
-+ Parent Email 
-  - hide off campus / no Thanks
-  - test trigger working
-
 + Advisor
   + Show = upcoming events shows all student not just advisor
 
@@ -31,22 +47,6 @@ N+1 Queries
   Student details, 1 for each event 
 
 
-Timeline
-7/21: Auth continued                Staff returning
-7/28: Remove Dangerous Task
-8/04: Prod Deployment
-8/11: Data Migration / Bulk Tool
-8/18: Regession Testing                  Casses Resume
-
-
-09/01: Vehicle / off campus Logs gather
-10/01: Special Views
-11/01: Student Pictures
-12/01: Tranport Drag/drop
-
-
-Blake Questions
-=================
 
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -130,8 +130,9 @@ Edge Casses
 
 
 
-Done!
-=================
+==============================================================================
+                                Done!
+==============================================================================
 + Event result page
   - Student spit by living area
   - totals for each catgory
@@ -146,3 +147,9 @@ Done!
 
 + Seed database
   + make event date realitve today so don't have to manually update
+
+  7/21: Auth continued                Staff returning
+
+  + Parent Email 
+  - hide off campus / no Thanks
+  - test trigger working
