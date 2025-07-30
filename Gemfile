@@ -61,7 +61,7 @@ group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
   gem "rails_live_reload"
-  gem 'letter_opener'
+  # gem 'mailcatcher', require: false #install manually
 end
 
 group :test do

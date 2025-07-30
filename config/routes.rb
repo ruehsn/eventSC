@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     member do
       get 'event_signup'
       post 'submit_event_options'
+      post 'send_parent_email_now'
     end
   end
   resources :vehicles

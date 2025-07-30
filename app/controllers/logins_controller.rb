@@ -16,7 +16,11 @@ class LoginsController < ApplicationController
     
     # Development bypass - directly login without magic link
     if Rails.env.development? && params[:dev_bypass] == 'true'
-      user = User.find_or_create_by(email: email)
+      user = User.find_by(email: email)
+      unless user.present?
+        redirect_to login_path, alert: "You do not currently have access to this system. Please contact Heather to be added."
+        return
+      end
       login(user)
       redirect_to root_path, notice: "Development bypass: Logged in as #{email}"
       return
@@ -28,14 +32,20 @@ class LoginsController < ApplicationController
       return
     end
 
-    user = User.find_or_create_by(email: params[:email])
+    user = User.find_by(email: email)
+    
+    # Check if user exists in the system
+    unless user.present?
+      redirect_to login_path, alert: "You do not currently have access to this system. Please contact Heather to be added."
+      return
+    end
     
     # In development, provide option to skip email sending
     if Rails.env.development? && Rails.application.config.respond_to?(:skip_magic_link_emails) && Rails.application.config.skip_magic_link_emails
       login(user)
       redirect_to root_path, notice: "Development: Logged in directly as #{email}"
     else
-      UserMailer.with(user: user).login.deliver_now if user.present?
+      UserMailer.with(user: user).login.deliver_now
       redirect_to root_path, notice: "Check your email to login."
     end
   end
@@ -43,8 +53,12 @@ class LoginsController < ApplicationController
   # Development only route for quick login
   def dev_login
     if Rails.env.development?
-      email = params[:email] || 'dev@shepherdscollege.edu'
-      user = User.find_or_create_by(email: email)
+      email = params[:email] || 'admin@shepherdscollege.edu'
+      user = User.find_by(email: email)
+      unless user.present?
+        redirect_to root_path, alert: "User #{email} not found. Please contact Heather to be added."
+        return
+      end
       login(user)
       redirect_to root_path, notice: "Development login: Logged in as #{email}"
     else

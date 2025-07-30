@@ -29,43 +29,40 @@
   <nav class="bg-gray-50 dark:bg-gray-900 p-3 border-b">
     <div class="flex items-center justify-between">
       <!-- Left empty space for balance -->
-      <div class="w-24">
-        <% if Rails.env.development? %>
-          <span class="text-xs text-yellow-600 font-semibold">DEV</span>
-        <% end %>
-      </div>
+      <div class="w-24"></div>
       
       <!-- Centered navigation links -->
       <div class="flex gap-4 items-center justify-center">
         <a href="<%= students_path %>" class="hover:text-gray-600">All Students</a>
         <a href="<%= advisors_path %>" class="hover:text-gray-600">Advisors</a>
         <a href="<%= events_path %>" class="hover:text-gray-600">Events</a>
-        <% if admin_user? %>
-          <a href="<%= users_path %>" class="hover:text-gray-600 text-blue-600 font-semibold">Users</a>
-        <% end %>
-      </div>
       
+
+  <% if admin_user? %>
+    <div class="relative group">
+      <button class="hover:text-gray-600 flex items-center gap-1">
+        Admin
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+      </button>
+      <div class="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 min-w-48">
+        <div class="py-1">
+          <%= link_to "Create New Event", new_event_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+          <%= link_to "Remove Events", events_path(admin_view: true), class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+          <%= link_to "User Management", users_path, class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
       <!-- Right-aligned logout button -->
       <div class="w-24 flex justify-end">
         <%= button_to "Logout", login_path, method: :delete, class: "px-2 py-1 bg-red-300 hover:bg-red-400 text-white rounded" %>
       </div>
     </div>
   </nav>
-<% else %>
-  <body>
-  <% if Rails.env.development? %>
-  <nav class="bg-yellow-50 dark:bg-yellow-900 p-2 border-b border-yellow-200">
-    <div class="flex items-center justify-between text-sm">
-      <span class="text-yellow-800 font-semibold">DEVELOPMENT MODE</span>
-      <div class="flex gap-2">
-        <%= link_to "Quick Login (dev)", dev_login_login_path, 
-            class: "px-2 py-1 bg-yellow-500 hover:bg-yellow-600 text-white rounded text-xs" %>
-        <%= link_to "Quick Login (admin)", dev_login_login_path(email: 'admin@shepherdscollege.edu'), 
-            class: "px-2 py-1 bg-yellow-500 hover:bg-yellow-600 text-white rounded text-xs" %>
-      </div>
-    </div>
-  </nav>
-  <% end %>
 <% end %>
 
     <div class="container mx-auto px-4">

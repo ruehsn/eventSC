@@ -51,7 +51,7 @@
   </thead>
   <tbody>
     <% @upcoming_events.each do |event| %>
-      <% event_options_with_students = event.event_options.select { |eo| eo.student_event_options.any? } %>
+      <% event_options_with_students = event.event_options.select { |eo| eo.student_event_options.any? { |seo| seo.student.advisor_id == @advisor.id } } %>
       <% event_options_with_students.each_with_index do |event_option, index| %>
           <tr>
             <% if index == 0 %>
@@ -62,7 +62,7 @@
             <td><%= event_option.description %></td>
             <td><%= display_event_option_cost(event_option) %></td>
             <td class="grid grid-cols-3 gap-x-4">
-              <% event_option.student_event_options.each do |seo| %>
+              <% event_option.student_event_options.select { |seo| seo.student.advisor_id == @advisor.id }.each do |seo| %>
                 <span class="<%= (seo.student.student_life_holds_cash && !event_option.office_holds_cash) ? 'bg-green-200' : '' %>">
                   <%= seo.student.short_name %>
                 </span>

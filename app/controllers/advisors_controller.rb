@@ -12,6 +12,8 @@ class AdvisorsController < ApplicationController
     @upcoming_events = Event.upcoming
                          .joins(:event_options)
                          .merge(EventOption.yes_options)
+                         .joins(event_options: { student_event_options: :student })
+                         .where(students: { advisor_id: @advisor.id })
                          .includes(event_options: :student_event_options)
                          .distinct
     @upcoming_event_ids = Event.upcoming.pluck(:id) # Cache this for use in view

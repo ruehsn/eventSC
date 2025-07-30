@@ -3,30 +3,82 @@
   Upcoming Events for <%= @student.first_name %> <%= @student.last_name %>
   </h1>
 
-  <%= form_with url: submit_event_options_student_path(@student), method: :post, local: true do %>
-    <div class="space-y-4">
-      <% @upcoming_events.each do |event| %>
-        <div class="bg-white shadow rounded-lg p-2">
-          <h3 class="text-lg font-semibold mb-4">
-            <%= event.name %> - <%= event.date.strftime("%A, %B %d, %Y") %>
-          </h3>
-          <div class="space-y-2">
-            <% event.event_options.each do |option| %>
-              <div class="flex items-center space-x-2">
-                <%= radio_button_tag "event_options[#{event.id}]", option.id, @selected_options.include?(option.id), id: "event_#{event.id}_option_#{option.id}" %>
-                <%= label_tag "event_#{event.id}_option_#{option.id}", "#{option.description} (#{number_to_currency(option.cost, unit: '$')})" %>
+  <%
+    # Build costs hash for JavaScript
+    costs_hash = {}
+    @upcoming_events.each do |event|
+      event.event_options.each do |option|
+        costs_hash[option.id.to_s] = option.cost.to_f
+      end
+    end
+  %>
+
+  <div class="flex gap-6" data-controller="event-signup-total" data-event-signup-total-costs-value="<%= costs_hash.to_json %>">
+    <!-- Main Content Area -->
+    <div class="flex-1">
+      <%= form_with url: submit_event_options_student_path(@student), method: :post, local: true, id: "event-signup-form" do %>
+        <div class="space-y-4">
+          <% @upcoming_events.each do |event| %>
+            <div class="bg-white shadow rounded-lg p-4">
+              <h3 class="text-lg font-semibold mb-4">
+                <%= event.name %> - <%= event.date.strftime("%A, %B %d, %Y") %>
+              </h3>
+              <div class="space-y-3">
+                <% event.event_options.each do |option| %>
+                  <div class="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded">
+                    <%= radio_button_tag "event_options[#{event.id}]", option.id, @selected_options.include?(option.id), 
+                        id: "event_#{event.id}_option_#{option.id}",
+                        class: "w-4 h-4 text-blue-600",
+                        data: { 
+                          "event-signup-total-target": "option",
+                          "action": "change->event-signup-total#updateTotal"
+                        } %>
+                    <%= label_tag "event_#{event.id}_option_#{option.id}", 
+                        "#{option.description} (#{number_to_currency(option.cost, unit: '$')})",
+                        class: "text-sm font-medium text-gray-700 cursor-pointer" %>
+                  </div>
+                <% end %>
               </div>
-            <% end %>
-          </div>
+            </div>
+          <% end %>
+        </div>
+        
+        <div class="mt-8 mb-6">
+          <%= submit_tag "Save Selections", class: "w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors" %>
         </div>
       <% end %>
-    </div>
-    <div class="mt-6">
-      <%= submit_tag "Save Selections", class: "btn" %>
-    </div>
-  <% end %>
 
-  <div class="mt-6">
-    <%= link_to "Back to Student", student_path(@student), class: "btn-secondary" %>
+      <div class="mt-6">
+        <%= link_to "Back to Student", student_path(@student), class: "text-blue-600 hover:text-blue-800 font-medium" %>
+      </div>
+    </div>
+
+    <!-- Sticky Sidebar with Total -->
+    <div class="w-80">
+      <div class="sticky top-4">
+        <div class="bg-white border border-gray-200 rounded-lg shadow-lg p-6">
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">Selection Summary</h3>
+          
+          <div class="border-t border-gray-100 pt-4">
+            <div class="flex justify-between items-center mb-2">
+              <span class="text-base text-gray-600">Total Cost:</span>
+              <span class="text-2xl font-bold text-green-600" data-event-signup-total-target="total">$0.00</span>
+            </div>
+            
+            <div class="text-xs text-gray-500 mt-2">
+              Updates automatically as you make selections
+            </div>
+          </div>
+
+          <!-- Selected Events Summary -->
+          <div class="mt-6 pt-4 border-t border-gray-100">
+            <h4 class="text-sm font-medium text-gray-700 mb-3">Selected Events:</h4>
+            <div class="space-y-2" data-event-signup-total-target="summary">
+              <div class="text-sm text-gray-500 italic">No events selected yet</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

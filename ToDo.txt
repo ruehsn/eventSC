@@ -1,6 +1,10 @@
 Timeline
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 7/28: Remove Dangerous Task
+ + new advisor
+ + new student
+ + delete student/advisor
+ 
 8/04: Prod Deployment
 8/11: Data Migration / Bulk Tool
 8/18: Regession Testing                  Casses Resume
@@ -16,10 +20,19 @@ Blake Questions
 =================
 
 
-
-
 Next Actions
 =================
++ Remove any username signup ✓
+  - add message to contact xxx if not enabled ✓
+  -
+
++ Audit Logs for dangerous Actions
+  + emails sent
+  + survey changes
+  + any edit/delete Actions
+  + email login tokens generated
+  
+
 + Advisor
   + Show = upcoming events shows all student not just advisor
 
@@ -71,7 +84,7 @@ TODOs
 
 + Style Improvements
 
-+ Parent email - 30 min delay to avoid spamming  
++ Parent email - 30 min delay to avoid spamming ✓ (2 hour delay)  
 
 Edge Casses
 + Event with paying options that are not Dinner, will not display nicely on Advisor show Page

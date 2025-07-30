@@ -1,5 +1,5 @@
 class StudentsController < ApplicationController
-  before_action :set_student, only: %i[ show edit update destroy ]
+  before_action :set_student, only: %i[ show edit update destroy event_signup submit_event_options send_parent_email_now ]
 
   # GET /students or /students.json
   def index
@@ -82,12 +82,22 @@ class StudentsController < ApplicationController
       pp "Saving #{@student.id} #{eventOption.id} #{event.id}"
     end
 
-    # Send confirmation email to parent
+    # Send confirmation email to parent (delayed)
     if @student.parent_email.present?
-      ParentMailer.event_signup_confirmation(@student).deliver_now
+      DelayedParentEmailService.schedule_email(@student)
+      redirect_to student_path(@student), notice: "Event selections saved. Parent email will be sent in 2 hours."
+    else
+      redirect_to student_path(@student), notice: "Event selections saved."
     end
+  end
 
-     redirect_to student_path(@student), notice: "Event selections saved and parent notified."
+  def send_parent_email_now
+    if @student.parent_email.present?
+      DelayedParentEmailService.send_immediately(@student)
+      redirect_to @student, notice: "Parent email sent immediately to #{@student.parent_email}"
+    else
+      redirect_to @student, alert: "No parent email address on file for this student."
+    end
   end
 
   private
