@@ -82,3 +82,5 @@ config/master.key
 !/app/assets/builds/.keep
 
 /db/*.tdf
+fly.toml
+fly_preview.toml

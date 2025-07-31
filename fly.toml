@@ -3,6 +3,7 @@
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
+#this is the production configuration for the eventsc application:
 app = 'eventsc'
 primary_region = 'ord'
 console_command = '/rails/bin/rails console'
@@ -13,7 +14,7 @@ swap_size_mb = 512
 [env]
   DATABASE_URL = 'sqlite3:///data/production.sqlite3'
   PORT = '8080'
-
+ 
 [processes]
   app = './bin/rails server'
 
@@ -30,6 +31,7 @@ swap_size_mb = 512
   auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 0
+  auto_stop_machines_timeout = '1h'
   processes = ['app']
 
   [[http_service.checks]]

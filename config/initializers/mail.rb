@@ -1,6 +1,6 @@
 class StagingMailInterceptor
   def self.delivering_email(message)
-    message.subject = "[STAGING] #{message.subject} - [#{message.to}]"
+    message.subject = "[STAGING] #{message.subject} __| TO: #{message.to}"
     message.to = Rails.application.credentials.staging.mail_interceptor_to
   end
 end
