@@ -1,3 +1,7 @@
+Next Actions
+============================
+
+
 Timeline
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 7/28: Remove Dangerous Task
@@ -18,27 +22,24 @@ Timeline
 
 Blake Questions
 =================
-
++ creating a staging environment for Fly.Io
+  - when git push staging automatally deployed
+  - production manually trigered at 
 
 Next Actions
 =================
-+ Remove any username signup ✓
++production test mode
   - add message to contact xxx if not enabled ✓
-  -
 
 + Audit Logs for dangerous Actions
   + emails sent
   + survey changes
   + any edit/delete Actions
   + email login tokens generated
-  
-
-+ Advisor
-  + Show = upcoming events shows all student not just advisor
 
 + Event Creation Form improvements
-  -syling
-  -compact Options discription
+  - syling
+  - compact Options discription
   + first event time default rest of the date/time
   + No Thanks, off campus check boxes
 
@@ -54,13 +55,6 @@ Next Actions
 + Edit Student Page
  + advisor drop down
  + styling
-
-
-N+1 Queries
-  Student details, 1 for each event 
-
-
-
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -84,7 +78,7 @@ TODOs
 
 + Style Improvements
 
-+ Parent email - 30 min delay to avoid spamming ✓ (2 hour delay)  
+
 
 Edge Casses
 + Event with paying options that are not Dinner, will not display nicely on Advisor show Page
@@ -95,17 +89,11 @@ Edge Casses
 
 + Gather Off Campus Logs
 
-+ Parent Email
-
 + Move 'Dangerous' Actions to another section
   - Edit/delete students
   - Edit/Delete Events
   -
-+ Authentication Email Magic Links
-  - https://railsdesigner.com/saas/magic-links-for-rails-authentication/
-  - Limit to shepherds' domain
-  - long lasting 90 day expire token
-  - sign out button
+
 
 + Locked Event Feature
   - Event can be marked as "Locked"
@@ -166,3 +154,18 @@ Edge Casses
   + Parent Email 
   - hide off campus / no Thanks
   - test trigger working
+
++ Remove any username signup ✓
+
++ Parent Email
+
++ Advisor
+  + Show = upcoming events shows all student not just advisor
++ Parent email - 30 min delay to avoid spamming ✓ (2 hour delay)  
+
+
++ Authentication Email Magic Links
+  - https://railsdesigner.com/saas/magic-links-for-rails-authentication/
+  - Limit to shepherds' domain
+  - long lasting 90 day expire token
+  - sign out button
