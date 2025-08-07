@@ -26,8 +26,7 @@ class LoginsController < ApplicationController
       return
     end
     
-    # In development, be more lenient with email validation
-    unless Rails.env.development? || email.ends_with?('@shepherdscollege.edu')
+    unless email.ends_with?('@shepherdscollege.edu')
       redirect_to login_path, notice: "Invalid email, reminder to use your work email address are allowed." 
       return
     end
@@ -37,6 +36,10 @@ class LoginsController < ApplicationController
     # Check if user exists in the system
     unless user.present?
       redirect_to login_path, alert: "You do not currently have access to this system. Please contact Heather to be added."
+      return
+    else
+      UserMailer.with(user: user).login.deliver_now if user.present?
+      redirect_to root_path, notice: "Check your email to login."
       return
     end
     
