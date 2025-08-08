@@ -12,11 +12,10 @@ require 'csv'
 puts "Seeding database..."
 
 # Create development users in development environment first
-if Rails.env.development?
+if Rails.env.development? 
   puts "Creating development users..."
-  dev_user = User.find_or_create_by(email: 'dev@shepherdscollege.edu')
+  User.find_or_create_by(email: 'user@shepherdscollege.edu')
   admin_user = User.find_or_create_by(email: 'admin@shepherdscollege.edu')
-  test_user = User.find_or_create_by(email: 'test@shepherdscollege.edu')
   
   # Make the admin user an admin
   admin_user.update!(is_admin: true)

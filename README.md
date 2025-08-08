@@ -15,8 +15,6 @@ For development convenience, magic link authentication can be bypassed:
    - `/login/dev_login?email=admin@shepherdscollege.edu` - Login as admin@shepherdscollege.edu
 
 ### Configuration:
-- `config.skip_magic_link_emails = true` in `config/environments/development.rb` (default: true)
-- Email validation is relaxed in development (doesn't require @shepherdscollege.edu domain)
 - Development users are auto-created during `rails db:seed`
 
 ### Security Note:

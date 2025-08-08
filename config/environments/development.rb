@@ -28,9 +28,6 @@ Rails.application.configure do
   # Change to :null_store to avoid any caching.
   config.cache_store = :memory_store
 
-  # Development authentication bypasses
-  config.skip_magic_link_emails = true  # Set to false if you want to test actual email sending
-
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 

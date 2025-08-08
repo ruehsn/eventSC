@@ -73,3 +73,5 @@ end
 
 
 gem "dockerfile-rails", ">= 1.7", group: :development
+
+gem "fly-rails", "~> 0.3.5"

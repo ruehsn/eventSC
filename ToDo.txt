@@ -1,5 +1,23 @@
 Next Actions
-============================
+======================================
+
+Login
+ - remove bypass email check boxes
+ - rename dev to user
+ - test magic emails still work
+ - test magic links 
+ - cleanup controller LoginsController
+ - modify intercepted to allow magic links
+ - modify intercepter to send email to Heather, Nathan
+ + test error messaging
+   - non-shepherds email
+   - email not on user table
+ + create some automated test
+ + practice branching
+ 
+
+
+
 
 
 Timeline

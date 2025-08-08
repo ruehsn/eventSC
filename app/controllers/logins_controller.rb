@@ -7,49 +7,29 @@ class LoginsController < ApplicationController
       login(user)
       redirect_to root_path
     else
-      redirect_to root_path, alert: "Invalid or expired login link."
+      flash.now[:alert] = "Invalid or expired login link." unless flash[:alert].present? || flash[:notice].present?
+      render 'main/index'
     end
   end
 
   def create
-    email = params[:email].to_s.strip.downcase
-    
-    # Development bypass - directly login without magic link
-    if Rails.env.development? && params[:dev_bypass] == 'true'
-      user = User.find_by(email: email)
-      unless user.present?
-        redirect_to login_path, alert: "You do not currently have access to this system. Please contact Heather to be added."
-        return
-      end
-      login(user)
-      redirect_to root_path, notice: "Development bypass: Logged in as #{email}"
-      return
-    end
-    
+    email = params[:email].to_s.strip.downcase    
+   
     unless email.ends_with?('@shepherdscollege.edu')
-      redirect_to login_path, notice: "Invalid email, reminder to use your work email address are allowed." 
+      redirect_to root_path, alert: "Invalid email, reminder to use your work email address are allowed." 
       return
     end
 
     user = User.find_by(email: email)
     
     # Check if user exists in the system
-    unless user.present?
-      redirect_to login_path, alert: "You do not currently have access to this system. Please contact Heather to be added."
+    if user.present?
+      UserMailer.with(user: user).login.deliver_now 
+      redirect_to login_path, notice: "Check your email to login."
       return
     else
-      UserMailer.with(user: user).login.deliver_now if user.present?
-      redirect_to root_path, notice: "Check your email to login."
+      redirect_to root_path, alert: "You do not currently have access to this system. Please contact Heather to be added."
       return
-    end
-    
-    # In development, provide option to skip email sending
-    if Rails.env.development? && Rails.application.config.respond_to?(:skip_magic_link_emails) && Rails.application.config.skip_magic_link_emails
-      login(user)
-      redirect_to root_path, notice: "Development: Logged in directly as #{email}"
-    else
-      UserMailer.with(user: user).login.deliver_now
-      redirect_to root_path, notice: "Check your email to login."
     end
   end
 
