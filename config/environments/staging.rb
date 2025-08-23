@@ -62,7 +62,7 @@ Rails.application.configure do
   config.action_mailer.delivery_method = :smtp
 
   # Set host to be used by links generated in mailer templates.
-  config.action_mailer.default_url_options = { host: ENV.fetch("MAILER_HOST", "eventsc-staging.fly.dev") }
+  config.action_mailer.default_url_options = { host: ENV.fetch("MAILER_HOST", "eventsc-preview.fly.dev") }
 
   # Specify outgoing SMTP server. Remember to add smtp/* credentials via rails credentials:edit.
   config.action_mailer.smtp_settings = {

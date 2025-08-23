@@ -8,9 +8,7 @@ class User < ApplicationRecord
       message: "must be a @shepherdscollege.edu email address" 
     }, unless: -> { Rails.env.development? }
 
-    generates_token_for :magic_login, expires_in: 1.hour do
-        last_sign_in_at
-    end
+    generates_token_for :magic_login, expires_in: 1.hour 
 
     # Admin functionality
     def admin?

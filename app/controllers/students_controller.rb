@@ -84,8 +84,14 @@ class StudentsController < ApplicationController
 
     # Send confirmation email to parent (delayed)
     if @student.parent_email.present?
-      DelayedParentEmailService.schedule_email(@student)
-      redirect_to student_path(@student), notice: "Event selections saved. Parent email will be sent in 2 hours."
+      if ! Rails.env.production?
+        ParentMailer.event_signup_confirmation(@student, Current.user.email).deliver_now
+      else
+        ParentMailer.event_signup_confirmation(@student).deliver_now
+        # DelayedParentEmailService.schedule_email(@student)
+        # redirect_to student_path(@student), notice: "Event selections saved. Parent email will be sent in 2 hours."
+      end
+      redirect_to student_path(@student), notice: "Event selections saved. Parent email has been sent."
     else
       redirect_to student_path(@student), notice: "Event selections saved."
     end

@@ -49,28 +49,7 @@
 <p>
   <strong>Parent Email:</strong>
   <%= @student.parent_email %>
-  <% if admin_user? && @student.parent_email.present? %>
-    <br>
-    <% if DelayedParentEmailService.pending_emails_for_student(@student) %>
-      <span class="text-sm text-orange-600">⏱️ Email scheduled to send in 2 hours</span>
-    <% end %>
-  <% end %>
-</p>
 
-<% if admin_user? && @student.parent_email.present? %>
-  <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-    <h3 class="text-lg font-semibold text-blue-800 mb-2">Parent Email Controls</h3>
-    <div class="flex gap-2">
-      <%= button_to "Send Parent Email Now", send_parent_email_now_student_path(@student), 
-            method: :post,
-            class: "bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm",
-            confirm: "Send parent email immediately to #{@student.parent_email}?" %>
-    </div>
-    <div class="text-xs text-gray-600 mt-2">
-      This will cancel any delayed email and send immediately.
-    </div>
-  </div>
-<% end %>
 
 <h2>Events Signed Up For</h2>
 <% if @student.student_event_options.any? %>

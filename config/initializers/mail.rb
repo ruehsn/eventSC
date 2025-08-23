@@ -1,7 +1,8 @@
 class StagingMailInterceptor
   def self.delivering_email(message)
-    message.subject = "[STAGING] #{message.subject} __| TO: #{message.to}"
-    message.to = Rails.application.credentials.staging.mail_interceptor_to
+    if ! Rails.env.production?
+      message.subject = "[Event-Preview] #{message.subject} __| TO: #{message.to}"
+    end
   end
 end
 

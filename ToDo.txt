@@ -1,17 +1,8 @@
 Next Actions
 ======================================
-
 Login
- - remove bypass email check boxes
- - rename dev to user
- - test magic emails still work
- - test magic links 
- - cleanup controller LoginsController
  - modify intercepted to allow magic links
  - modify intercepter to send email to Heather, Nathan
- + test error messaging
-   - non-shepherds email
-   - email not on user table
  + create some automated test
  + practice branching
  
@@ -175,6 +166,29 @@ Edge Casses
 + Advisor
   + Show = upcoming events shows all student not just advisor
 + Parent email - 30 min delay to avoid spamming ✓ (2 hour delay)  
+  - option to force send?
+<% if admin_user? && @student.parent_email.present? %>
+    <br>
+    <!-- <% # if DelayedParentEmailService.pending_emails_for_student(@student) %> -->
+      <span class="text-sm text-orange-600">⏱️ Email scheduled to send in 2 hours</span>
+    <% end %>
+  <% end %>
+</p>
+
+<% if admin_user? && @student.parent_email.present? %>
+  <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+    <h3 class="text-lg font-semibold text-blue-800 mb-2">Parent Email Controls</h3>
+    <div class="flex gap-2">
+      <%= button_to "Send Parent Email Now", send_parent_email_now_student_path(@student), 
+            method: :post,
+            class: "bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm",
+            confirm: "Send parent email immediately to #{@student.parent_email}?" %>
+    </div>
+    <div class="text-xs text-gray-600 mt-2">
+      This will cancel any delayed email and send immediately.
+    </div>
+  </div>
+<% end %>
 
 
 + Authentication Email Magic Links
@@ -182,3 +196,13 @@ Edge Casses
   - Limit to shepherds' domain
   - long lasting 90 day expire token
   - sign out button
+
+Remove bypass email check boxes
+--------------------------------
+ - rename dev to user
+ - test magic emails still work
+ - test magic links 
+ - cleanup controller LoginsController
+ + test error messaging
+   - non-shepherds email
+   - email not on user table

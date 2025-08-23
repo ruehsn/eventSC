@@ -15,7 +15,7 @@ class LoginsController < ApplicationController
   def create
     email = params[:email].to_s.strip.downcase    
    
-    unless email.ends_with?('@shepherdscollege.edu')
+    unless email.end_with?('@shepherdscollege.edu')
       redirect_to root_path, alert: "Invalid email, reminder to use your work email address are allowed." 
       return
     end

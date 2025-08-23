@@ -30,13 +30,6 @@ Student.delete_all  # Delete students first since they reference advisors and li
 Advisor.delete_all
 LivingArea.delete_all
 
-"Anderson|Bakovka|Calabrese|Tarwater|McCoy|Sliwinski|Kapity".split("|").each do |name|
-    Advisor.find_or_create_by(last_name: name)
-end
-
-"Male Dorm|Female Dorm|Cook East|Cook West|Glanville|Lamb East|Lamb West|Male Clark|Female Clark / Olsen".split("|").each do |name|
-    LivingArea.find_or_create_by!(name: name)
-end
 
 CSV.foreach("db/students.tdf", col_sep: "\t", :headers => true, :header_converters => :symbol) do |row|
     begin
@@ -47,9 +40,9 @@ CSV.foreach("db/students.tdf", col_sep: "\t", :headers => true, :header_converte
                                 notes_url:  row[:url], 
                                 gender:     row[:gender], 
                                 major:      row[:major],
-                                parent_email: "parent@example.com",
-                                advisor_id: Advisor.find_by(  last_name: row[:advisor]).id,
-                            living_area_id: LivingArea.find_by(    name: row[:living_area]).id)
+                                parent_email: row[:parent_email],
+                                advisor_id: Advisor.find_or_create_by(  last_name: row[:advisor]).id,
+                            living_area_id: LivingArea.find_or_create_by(    name: row[:living_area]).id)
     rescue ActiveRecord::RecordInvalid => e
         puts "Error creating student: #{e.message}: #{row[:short_name]} #{row[:living_area]} #{row[:advisor]}"
     end
