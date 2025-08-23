@@ -17,7 +17,7 @@ console_command = '/rails/bin/rails console'
   SECRET_KEY_BASE = '4e23dbe86cd0bfb61df63ee7814f68cfce4d09e5eb1450fb1b966b946fcbadbcb4059e3e3d1e08a1e0bd24079f711c3b3f999be851d859174aad83140df567b1'
 
 [processes]
-  app = './bin/rails server -e staging'
+  app = './bin/rails server'
 
 [[mounts]]
   source = 'data'
@@ -33,18 +33,6 @@ console_command = '/rails/bin/rails console'
   auto_start_machines = true
   min_machines_running = 0
   processes = ['app']
-
-  [[http_service.checks]]
-    interval = '10s'
-    timeout = '2s'
-    grace_period = '5s'
-    method = 'GET'
-    path = '/up'
-    protocol = 'http'
-    tls_skip_verify = false
-
-    [http_service.checks.headers]
-      X-Forwarded-Proto = 'https'
 
   [[http_service.checks]]
     interval = '10s'
