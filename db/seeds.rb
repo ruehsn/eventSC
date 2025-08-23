@@ -31,21 +31,26 @@ Advisor.delete_all
 LivingArea.delete_all
 
 
-CSV.foreach("db/students.tdf", col_sep: "\t", :headers => true, :header_converters => :symbol) do |row|
-    begin
-        Student.find_or_create_by!(first_name: row[:first], 
-                                last_name:  row[:last], 
-                                short_name: row[:short_name], 
-                                year:       row[:year], 
-                                notes_url:  row[:url], 
-                                gender:     row[:gender], 
-                                major:      row[:major],
-                                parent_email: row[:parent_email],
-                                advisor_id: Advisor.find_or_create_by(  last_name: row[:advisor]).id,
-                            living_area_id: LivingArea.find_or_create_by(    name: row[:living_area]).id)
-    rescue ActiveRecord::RecordInvalid => e
-        puts "Error creating student: #{e.message}: #{row[:short_name]} #{row[:living_area]} #{row[:advisor]}"
-    end
+CSV.foreach("db/students.tdf", col_sep: "\t", headers: true, header_converters: :symbol) do |row|
+  # Convert CSV::Row to hash and normalize '0' strings to empty string
+  normalized = row.to_h.transform_values { |v| v == '0' ? '' : v }
+
+  begin
+    Student.find_or_create_by!(
+      first_name:     normalized[:first],
+      last_name:      normalized[:last],
+      short_name:     normalized[:short_name],
+      year:           normalized[:year],
+      notes_url:      normalized[:url],
+      gender:         normalized[:gender],
+      major:          normalized[:major],
+      parent_email:   normalized[:parent_email],
+      advisor_id:     Advisor.find_or_create_by(last_name: normalized[:advisor]).id,
+      living_area_id: LivingArea.find_or_create_by(name: normalized[:living_area]).id
+    )
+  rescue ActiveRecord::RecordInvalid => e
+    puts "Error creating student: #{e.message}: #{normalized[:short_name]} #{normalized[:living_area]} #{normalized[:advisor]}"
+  end
 end
 
 today = Date.today + ((5 - Date.today.wday) % 7)

@@ -36,4 +36,6 @@
   </tbody>
 </table>
 
-<%= link_to "New student", new_student_path %>
+<% if admin_user? %>
+  <%= link_to "New student", new_student_path %>
+<% end %>

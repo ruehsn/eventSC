@@ -1,14 +1,8 @@
 Next Actions
 ======================================
 Login
- - modify intercepted to allow magic links
- - modify intercepter to send email to Heather, Nathan
  + create some automated test
  + practice branching
- 
-
-
-
 
 
 Timeline
@@ -17,11 +11,6 @@ Timeline
  + new advisor
  + new student
  + delete student/advisor
- 
-8/04: Prod Deployment
-8/11: Data Migration / Bulk Tool
-8/18: Regession Testing                  Casses Resume
-
 
 09/01: Vehicle / off campus Logs gather
 10/01: Special Views
@@ -31,9 +20,34 @@ Timeline
 
 Blake Questions
 =================
-+ creating a staging environment for Fly.Io
-  - when git push staging automatally deployed
-  - production manually trigered at 
+
+
+
+
+September
+  Week 1, 09/03: Activity TBD, Social Get to Know You Activity Planned by Advisors
+  Week 2, 09/10: Budgeting, Activities only
+**Week 3, 09/17: PSST Inventories, Activities Sign-Ups
+  Week 4, 09/24: Budgeting, Activities and Personal Supplies
+
+October
+  Week 1, 10/01: Shopping Trip
+  Week 2, 10/08: Budget, Activities only
+  Week 3, 10/15: PSST Inventories, Activity Sign-Ups
+**Week 4, 10/22: Budget, Activities and Personal Supplies
+  Week 5, 10/29: Shopping Trip
+
+November
+  Week 1, 11/05: Budget Activities only
+**Week 2, 11/12: PSST Inventories and Activity Sign-Ups
+  Week 3, 11/19: Budget Activities and Personal Supplies ***3 Week Budget***
+  Week 4, 11/26: Thanksgiving Travel
+
+December
+  Week 1, 12/03: Shopping Trip
+  Week 2, 12/10: Budget Activities Only, Christmas Celebration (second hour)
+  Week 3, 12/17: Packing and Departure for Winter Break
+
 
 Next Actions
 =================
@@ -67,7 +81,7 @@ Next Actions
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-TODOs
+Features:
 ================
  +Add Events needing a respons on
     + Advisor Page index page totall accross all students
@@ -138,6 +152,10 @@ Edge Casses
 ==============================================================================
                                 Done!
 ==============================================================================
+ - modify intercepted to allow magic links
+ - modify intercepter to send email to Heather, Nathan
+
+
 + Event result page
   - Student spit by living area
   - totals for each catgory

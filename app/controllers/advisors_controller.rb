@@ -1,5 +1,6 @@
 class AdvisorsController < ApplicationController
   before_action :set_advisor, only: %i[ show edit update destroy ]
+  before_action :require_admin, only: %i[ new create edit update destroy ]
 
   # GET /advisors or /advisors.json
   def index
@@ -91,5 +92,11 @@ class AdvisorsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def advisor_params
       params.expect(advisor: [ :first_name, :last_name, :email ])
+    end
+
+    def require_admin
+      unless Current.user&.admin?
+        redirect_to advisors_path, alert: "Admin access required."
+      end
     end
 end

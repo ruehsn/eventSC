@@ -9,7 +9,9 @@
     <tr>
       <th>Advisor Name</th>
       <th>Students (Short Names)</th>
-      <th>Actions</th>
+      <% if admin_user? %>
+        <th>Actions</th>
+      <% end %>
     </tr>
   </thead>
   <tbody>
@@ -27,12 +29,16 @@
             None
           <% end %>
         </td>
-        <td>
-          <%= link_to "Edit", edit_advisor_path(advisor) %>
-        </td>
+        <% if admin_user? %>
+          <td>
+            <%= link_to "Edit", edit_advisor_path(advisor) %>
+          </td>
+        <% end %>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<%= link_to "New advisor", new_advisor_path %>
+<% if admin_user? %>
+  <%= link_to "New advisor", new_advisor_path %>
+<% end %>

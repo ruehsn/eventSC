@@ -3,7 +3,9 @@
 <%= render @advisor %>
 
 <div>
-  <%= link_to "Edit this advisor", edit_advisor_path(@advisor) %> |
+  <% if admin_user? %>
+    <%= link_to "Edit this advisor", edit_advisor_path(@advisor) %> |
+  <% end %>
   <%= link_to "Back to advisors", advisors_path %>
 </div>
 

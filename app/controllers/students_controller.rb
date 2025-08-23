@@ -1,5 +1,6 @@
 class StudentsController < ApplicationController
   before_action :set_student, only: %i[ show edit update destroy event_signup submit_event_options send_parent_email_now ]
+  before_action :require_admin, only: %i[ new create edit update destroy send_parent_email_now ]
 
   # GET /students or /students.json
   def index
@@ -115,5 +116,11 @@ class StudentsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def student_params
       params.require(:student).permit(:short_name, :first_name, :last_name, :notes_url, :living_area_id, :advisor_id, :year, :gender, :major, :parent_email)
+    end
+
+    def require_admin
+      unless Current.user&.admin?
+        redirect_to students_path, alert: "Admin access required."
+      end
     end
 end
