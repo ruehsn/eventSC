@@ -1,9 +1,14 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  email: MyString
+  email: user1@shepherdscollege.edu
   last_sign_in_at: 2025-07-23 18:57:02
 
 two:
-  email: MyString
+  email: user2@shepherdscollege.edu
+  last_sign_in_at: 2025-07-23 18:57:02
+
+admin:
+  email: admin@shepherdscollege.edu
+  is_admin: true
   last_sign_in_at: 2025-07-23 18:57:02

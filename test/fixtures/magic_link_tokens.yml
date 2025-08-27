@@ -5,9 +5,13 @@ one:
   token: MyString
   expires_at: 2025-07-23 18:20:31
   used: false
+  created_at: 2025-07-23 18:20:31
+  updated_at: 2025-07-23 18:20:31
 
 two:
   email: MyString
   token: MyString
   expires_at: 2025-07-23 18:20:31
   used: false
+  created_at: 2025-07-23 18:20:31
+  updated_at: 2025-07-23 18:20:31
