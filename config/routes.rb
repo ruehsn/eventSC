@@ -1,19 +1,19 @@
 Rails.application.routes.draw do
-  get 'survey', to: 'survey#index'
-  post 'survey/submit', to: 'survey#submit'
+  get "survey", to: "survey#index"
+  post "survey/submit", to: "survey#submit"
   resources :students do
     member do
-      get 'event_signup'
-      post 'submit_event_options'
-      post 'send_parent_email_now'
+      get "event_signup"
+      post "submit_event_options"
+      post "send_parent_email_now"
     end
   end
   resources :vehicles
   resources :event_options
   resources :events do
     member do
-      get 'cash_office'
-      get 'student_cash'
+      get "cash_office"
+      get "student_cash"
     end
   end
   resources :living_areas
@@ -22,15 +22,18 @@ Rails.application.routes.draw do
       get :students
     end
   end
-  resources :survey, only: [:index, :show]
-  resource :login, only: [:show, :destroy, :create] do
-    # Development only route
-    get :dev_login, on: :collection if Rails.env.development?
+  resources :survey, only: [ :index, :show ]
+  resource :login, only: [ :show, :destroy, :create ]
+
+  # Development and test only route for integration test authentication
+  if Rails.env.development? || Rails.env.test?
+    get "/dev_login", to: "logins#dev_login"
+    post "/dev_login", to: "logins#dev_login"
   end
-  
+
   # Admin user management
-  resources :users, only: [:index, :show, :create, :update, :destroy]
-  
+  resources :users, only: [ :index, :show, :create, :update, :destroy ]
+
   root "main#index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

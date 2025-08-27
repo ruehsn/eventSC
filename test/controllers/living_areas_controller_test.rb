@@ -2,6 +2,7 @@ require "test_helper"
 
 class LivingAreasControllerTest < ActionDispatch::IntegrationTest
   setup do
+    login_as_admin_integration
     @living_area = living_areas(:one)
   end
 
@@ -39,8 +40,9 @@ class LivingAreasControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should destroy living_area" do
+    living_area_to_delete = living_areas(:two)
     assert_difference("LivingArea.count", -1) do
-      delete living_area_url(@living_area)
+      delete living_area_url(living_area_to_delete)
     end
 
     assert_redirected_to living_areas_url

@@ -4,6 +4,9 @@
       <th>Event Date (Event Name)</th>
       <th>Summary of Signups</th>
       <th>Missing Students</th>
+      <% if params[:admin_view] == 'true' && admin_user? %>
+        <th>Actions</th>
+      <% end %>
     </tr>
   </thead>
   <tbody>
@@ -29,8 +32,13 @@
           <%= total_students - signed_up_students %>
         </td>
 
-      
-        </tr>
+        <% if params[:admin_view] == 'true' && admin_user? %>
+          <td>
+            <%= link_to 'Edit', edit_event_path(event), class: 'btn btn-sm btn-primary' %>
+            <%= link_to 'Delete', event_path(event), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm bg-red-600 text-white hover:bg-red-700' %>
+          </td>
+        <% end %>
+      </tr>
     <% end %>
   </tbody>
 </table>

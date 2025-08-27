@@ -2,6 +2,7 @@ require "test_helper"
 
 class EventsControllerTest < ActionDispatch::IntegrationTest
   setup do
+    login_as_admin_integration
     @event = events(:one)
   end
 
@@ -17,7 +18,7 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
 
   test "should create event" do
     assert_difference("Event.count") do
-      post events_url, params: { event: { date: @event.date, name: @event.name, survey_month: @event.survey_month } }
+      post events_url, params: { event: { date: @event.date, name: @event.name } }
     end
 
     assert_redirected_to event_url(Event.last)
@@ -34,7 +35,7 @@ class EventsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update event" do
-    patch event_url(@event), params: { event: { date: @event.date, name: @event.name, survey_month: @event.survey_month } }
+    patch event_url(@event), params: { event: { date: @event.date, name: @event.name } }
     assert_redirected_to event_url(@event)
   end
 

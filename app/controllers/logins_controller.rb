@@ -1,5 +1,5 @@
 class LoginsController < ApplicationController
-  skip_before_action :require_login, only: [:show, :destroy, :create, :dev_login]
+  skip_before_action :require_login, only: [ :show, :destroy, :create, :dev_login ]
 
   def show
     user = User.find_by_token_for(:magic_login, params[:token])
@@ -8,35 +8,35 @@ class LoginsController < ApplicationController
       redirect_to root_path
     else
       flash.now[:alert] = "Invalid or expired login link." unless flash[:alert].present? || flash[:notice].present?
-      render 'main/index'
+      render "main/index"
     end
   end
 
   def create
-    email = params[:email].to_s.strip.downcase    
-   
-    unless email.end_with?('@shepherdscollege.edu')
-      redirect_to root_path, alert: "Invalid email, reminder to use your work email address are allowed." 
+    email = params[:email].to_s.strip.downcase
+
+    unless email.end_with?("@shepherdscollege.edu")
+      redirect_to root_path, alert: "Invalid email, reminder to use your work email address are allowed."
       return
     end
 
     user = User.find_by(email: email)
-    
+
     # Check if user exists in the system
     if user.present?
-      UserMailer.with(user: user).login.deliver_now 
+      UserMailer.with(user: user).login.deliver_now
       redirect_to login_path, notice: "Check your email to login."
-      return
+      nil
     else
       redirect_to root_path, alert: "You do not currently have access to this system. Please contact Heather to be added."
-      return
+      nil
     end
   end
 
   # Development only route for quick login
   def dev_login
-    if Rails.env.development?
-      email = params[:email] || 'admin@shepherdscollege.edu'
+    if Rails.env.development? || Rails.env.test?
+      email = params[:email] || "admin@shepherdscollege.edu"
       user = User.find_by(email: email)
       unless user.present?
         redirect_to root_path, alert: "User #{email} not found. Please contact Heather to be added."

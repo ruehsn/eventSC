@@ -6,7 +6,7 @@ class CreateEventOptions < ActiveRecord::Migration[8.0]
       t.boolean :office_holds_cash
       t.boolean :transportation_required
       t.integer :event_id
-      
+
       t.timestamps
     end
   end

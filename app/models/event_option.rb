@@ -3,7 +3,7 @@ class EventOption < ApplicationRecord
   has_many :student_event_options, dependent: :destroy
   has_many :students, through: :student_event_options
 
-  scope :yes_options, -> { 
+  scope :yes_options, -> {
     where.not("LOWER(description) LIKE ? OR LOWER(description) LIKE ?", "%no, thanks%", "%off campus%")
   }
 

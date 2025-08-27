@@ -1,1 +1,1 @@
-Rails.application.config.session_store :cookie_store, key: '_event_sc_session', expire_after: 45.days
+Rails.application.config.session_store :cookie_store, key: "_event_sc_session", expire_after: 45.days

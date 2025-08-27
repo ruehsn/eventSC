@@ -20,3 +20,10 @@ free:
   event: one
   office_holds_cash: false
   transportation_required: false
+
+one:
+  description: "Test Option"
+  cost: 10.00
+  event: one
+  office_holds_cash: true
+  transportation_required: false

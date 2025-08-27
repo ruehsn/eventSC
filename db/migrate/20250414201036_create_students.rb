@@ -11,10 +11,10 @@ class CreateStudents < ActiveRecord::Migration[8.0]
       t.string :gender
       t.string :major
       t.boolean :student_life_holds_cash, default: false
-      
+
       t.timestamps
     end
-    
+
     add_index :students, :short_name, unique: true
   end
 end

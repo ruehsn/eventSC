@@ -60,3 +60,14 @@ S_S2:
   short_name: "S_S2"
   advisor: two
   student_life_holds_cash: false
+
+one:
+  first_name: "Test"
+  last_name: "Student"
+  short_name: "TestOne"
+  notes_url: "http://example.com"
+  living_area: one
+  advisor: one
+  year: 2
+  gender: "M"
+  major: "EE"

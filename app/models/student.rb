@@ -9,7 +9,7 @@ class Student < ApplicationRecord
 
     # Adding a new boolean attribute with a default value of false
     attribute :student_life_holds_cash, :boolean, default: false
-    
+
     def self.students_with_cash_for_event_option(event_id)
         Student.joins(student_event_options: :event_option)
                .where("event_options.cost > 0")

@@ -9,3 +9,8 @@ two:
   first_name: AdvisorTwo
   last_name: AdvisorTwo
   email: MyString
+
+no_students:
+  first_name: NoStudents
+  last_name: Advisor
+  email: nostudents@example.com

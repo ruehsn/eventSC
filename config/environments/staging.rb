@@ -93,7 +93,7 @@ Rails.application.configure do
   #
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
-  
+
   # Fix CSRF origin mismatch when testing staging locally
   # In production deployments, this won't be needed as the app will be accessed via HTTPS
   config.action_controller.forgery_protection_origin_check = false

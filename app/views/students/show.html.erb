@@ -30,7 +30,16 @@
     <th>Notes URL</th>
     <td>
       <% if @student.notes_url.present? %>
-        <%= link_to "Notes", @student.notes_url, target: "_blank" %>
+        <% begin %>
+          <% uri = URI.parse(@student.notes_url) %>
+          <% if uri.scheme && %w[http https].include?(uri.scheme) %>
+            <%= link_to "Notes", sanitize(@student.notes_url), target: "_blank", rel: "noopener noreferrer" %>
+          <% else %>
+            Invalid URL format
+          <% end %>
+        <% rescue URI::InvalidURIError %>
+          Invalid URL
+        <% end %>
       <% else %>
         None
       <% end %>

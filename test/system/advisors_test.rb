@@ -5,5 +5,5 @@ class AdvisorsTest < ApplicationSystemTestCase
     @advisor = advisors(:one)
   end
 
-    # All scaffold tests disabled; see navigation_test.rb for current UI test coverage
+  # All scaffold tests disabled; see navigation_test.rb for current UI test coverage
 end

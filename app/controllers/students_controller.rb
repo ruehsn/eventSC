@@ -77,7 +77,7 @@ class StudentsController < ApplicationController
     selected_options.each_pair do |event_id, event_option_id|
       event       = Event.find(event_id)
       eventOption = EventOption.find(event_option_id)
-      s = StudentEventOption.find_or_initialize_by(student: @student, event:event)
+      s = StudentEventOption.find_or_initialize_by(student: @student, event: event)
       s.event_option_id = eventOption.id
       s.save!
       pp "Saving #{@student.id} #{eventOption.id} #{event.id}"

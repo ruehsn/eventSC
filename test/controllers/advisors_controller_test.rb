@@ -2,6 +2,7 @@ require "test_helper"
 
 class AdvisorsControllerTest < ActionDispatch::IntegrationTest
   setup do
+    login_as_admin_integration
     @advisor = advisors(:one)
   end
 
@@ -39,8 +40,9 @@ class AdvisorsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should destroy advisor" do
+    advisor_to_delete = advisors(:no_students)
     assert_difference("Advisor.count", -1) do
-      delete advisor_url(@advisor)
+      delete advisor_url(advisor_to_delete)
     end
 
     assert_redirected_to advisors_url

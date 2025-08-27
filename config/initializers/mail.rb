@@ -6,7 +6,7 @@ class StagingMailInterceptor
   end
 end
 
-# if Rails.env.staging?
+  # if Rails.env.staging?
   ActionMailer::Base.register_interceptor(StagingMailInterceptor)
 # end
 

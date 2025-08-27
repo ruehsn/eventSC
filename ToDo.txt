@@ -2,6 +2,24 @@ Next Actions
 ======================================
 Login
  + create some automated test
+ System/UI Tests
+
+
+create a  test for Student/Advisor CRUD: Test full create/edit/delete flows for students/advisors.
+create a  test for Event Option Logic: Test “Add Another Option” button and value copying.
+create a  test for Navigation Bar: Confirm correct links for logged-in/out/admin users.
+create a  test for TDF Import: Test importing TDF files and normalization of values.
+create a  test for Error Handling: Test 404, 422, 500 error pages and redirects.
+
+Model/Unit Tests
+
+User Model: Validate email format, admin flag, token generation.
+Event Model: Validate required fields, associations, and date logic.
+EventOption Model: Validate copying logic, required fields.
+Advisor/Student Models: Validate associations, required fields, and uniqueness.
+Service Objects: Test any custom logic/services (e.g., TDF import normalization).
+
+
  + practice branching
 
 
@@ -155,6 +173,10 @@ Edge Casses
  - modify intercepted to allow magic links
  - modify intercepter to send email to Heather, Nathan
 
+create a  test for Login Flow: Test magic link login (valid/invalid/expired token).
+create a  test for Logout Flow: Ensure users are logged out and redirected.
+create a  test for Admin Access: Verify admin-only pages/buttons are hidden for non-admins.
+create a  test for Event Creation/Edit: Test creating, editing, and deleting events as admin.
 
 + Event result page
   - Student spit by living area

@@ -12,11 +12,11 @@ require 'csv'
 puts "Seeding database..."
 
 # Create development users in development environment first
-if Rails.env.development? 
+if Rails.env.development?
   puts "Creating development users..."
   User.find_or_create_by(email: 'user@shepherdscollege.edu')
   admin_user = User.find_or_create_by(email: 'admin@shepherdscollege.edu')
-  
+
   # Make the admin user an admin
   admin_user.update!(is_admin: true)
   puts "Development users created! Admin: #{admin_user.email}"
@@ -63,12 +63,12 @@ end
 # Morning events (typically 9am-12pm)
 e = Event.find_or_create_by!(name: "Morning", date: today - 14)
 EventOption.find_or_create_by!(
-  event_id: e.id, 
-  description: "Mitchell Domes & Train Exhibit", 
-  cost: 6, 
-  office_holds_cash: true, 
-  transportation_required: true, 
-  leave_time: time_obj(9, 0), 
+  event_id: e.id,
+  description: "Mitchell Domes & Train Exhibit",
+  cost: 6,
+  office_holds_cash: true,
+  transportation_required: true,
+  leave_time: time_obj(9, 0),
   return_time: time_obj(12, 0)
 )
 EventOption.find_or_create_by!(event_id: e.id, description: "No, thanks", cost: 0, office_holds_cash: true, transportation_required: false, leave_time: nil, return_time: nil)
@@ -77,12 +77,12 @@ EventOption.find_or_create_by!(event_id: e.id, description: "Off Campus", cost: 
 # Afternoon events (typically 13:00-16:00)
 e = Event.find_or_create_by!(name: "Afternoon", date: today - 7)
 EventOption.find_or_create_by!(
-  event_id: e.id, 
-  description: "Zoo Trip", 
-  cost: 14, 
-  office_holds_cash: true, 
-  transportation_required: true, 
-  leave_time: time_obj(13, 0), 
+  event_id: e.id,
+  description: "Zoo Trip",
+  cost: 14,
+  office_holds_cash: true,
+  transportation_required: true,
+  leave_time: time_obj(13, 0),
   return_time: time_obj(16, 0)
 )
 EventOption.find_or_create_by!(event_id: e.id, description: "No, thanks", cost: 0, office_holds_cash: true, transportation_required: false, leave_time: nil, return_time: nil)
@@ -95,34 +95,34 @@ EventOption.find_or_create_by!(event_id: e.id, description: "No, thanks", cost: 
 
 # Dinner events (already has times, keep as is)
 e = Event.find_or_create_by!(name: "Dinner Out", date: today)
-["Culvers", "Pizza Ranch", "Chick-fil-A", "Wendy's", "Taco Bell"].each do |restaurant|
+[ "Culvers", "Pizza Ranch", "Chick-fil-A", "Wendy's", "Taco Bell" ].each do |restaurant|
   EventOption.find_or_create_by!(
-    event_id: e.id, 
-    description: restaurant, 
-    cost: 15, 
-    office_holds_cash: false, 
-    transportation_required: true, 
-    leave_time: time_obj(17, 0), 
+    event_id: e.id,
+    description: restaurant,
+    cost: 15,
+    office_holds_cash: false,
+    transportation_required: true,
+    leave_time: time_obj(17, 0),
     return_time: time_obj(19, 0)
   )
 end
 
 # For "No, thanks" and "Off Campus" options, use nil times
 EventOption.find_or_create_by!(
-  event_id: e.id, 
-  description: "No, thanks", 
-  cost: 0, 
-  office_holds_cash: false, 
+  event_id: e.id,
+  description: "No, thanks",
+  cost: 0,
+  office_holds_cash: false,
   transportation_required: true,
   leave_time: nil,
   return_time: nil
 )
 
 EventOption.find_or_create_by!(
-  event_id: e.id, 
-  description: "Off Campus", 
-  cost: 0, 
-  office_holds_cash: true, 
+  event_id: e.id,
+  description: "Off Campus",
+  cost: 0,
+  office_holds_cash: true,
   transportation_required: false,
   leave_time: nil,
   return_time: nil
@@ -131,14 +131,14 @@ EventOption.find_or_create_by!(
 
 # Update the second Dinner Out event
 e = Event.find_or_create_by!(name: "Dinner Out", date: today+7)
-["Panda Express", "Chipotle", "Chick-fil-A", "Five Guys", "MOD Pizza"].each do |restaurant|
+[ "Panda Express", "Chipotle", "Chick-fil-A", "Five Guys", "MOD Pizza" ].each do |restaurant|
   EventOption.find_or_create_by!(
-    event_id: e.id, 
-    description: restaurant, 
-    cost: 15, 
-    office_holds_cash: false, 
-    transportation_required: true, 
-    leave_time: time_obj(17, 0), 
+    event_id: e.id,
+    description: restaurant,
+    cost: 15,
+    office_holds_cash: false,
+    transportation_required: true,
+    leave_time: time_obj(17, 0),
     return_time: time_obj(19, 0)
   )
 end
@@ -148,34 +148,34 @@ EventOption.find_or_create_by!(event_id: e.id, description: "Off Campus", cost: 
 # Morning events with proper time objects
 e = Event.find_or_create_by!(name: "Morning", date: today +8)
 EventOption.find_or_create_by!(
-  event_id: e.id, 
-  description: "Discovery World Museum & Aquarium", 
-  cost: 15, 
-  office_holds_cash: false, 
-  transportation_required: true, 
-  leave_time: time_obj(9, 0), 
+  event_id: e.id,
+  description: "Discovery World Museum & Aquarium",
+  cost: 15,
+  office_holds_cash: false,
+  transportation_required: true,
+  leave_time: time_obj(9, 0),
   return_time: time_obj(12, 0)
 )
 EventOption.find_or_create_by!(
-  event_id: e.id, 
-  description: "Trip to Library", 
-  cost: 0, 
-  office_holds_cash: false, 
-  transportation_required: true, 
-  leave_time: time_obj(10, 0), 
+  event_id: e.id,
+  description: "Trip to Library",
+  cost: 0,
+  office_holds_cash: false,
+  transportation_required: true,
+  leave_time: time_obj(10, 0),
   return_time: time_obj(11, 30)
 )
 EventOption.find_or_create_by!(event_id: e.id, description: "No, thanks", cost: 0, office_holds_cash: false, transportation_required: false, leave_time: nil, return_time: nil)
 EventOption.find_or_create_by!(event_id: e.id, description: "Off Campus", cost: 0, office_holds_cash: false, transportation_required: false, leave_time: nil, return_time: nil)
 
 # Haircut events with proper time objects
-[today+14, today+15].each do |date|
+[ today+14, today+15 ].each do |date|
   e = Event.find_or_create_by!(name: "Haircut", date: date)
   EventOption.find_or_create_by!(
-    event_id: e.id, 
-    description: "Yes", 
-    cost: 12, 
-    office_holds_cash: true, 
+    event_id: e.id,
+    description: "Yes",
+    cost: 12,
+    office_holds_cash: true,
     transportation_required: false,
     leave_time: time_obj(14, 0),
     return_time: time_obj(15, 0)
@@ -186,19 +186,19 @@ end
 # Morning events with proper time objects
 e = Event.find_or_create_by!(name: "Morning", date: today+21)
 EventOption.find_or_create_by!(
-  event_id: e.id, 
-  description: "Library", 
-  cost: 0, 
-  office_holds_cash: true, 
+  event_id: e.id,
+  description: "Library",
+  cost: 0,
+  office_holds_cash: true,
   transportation_required: true,
   leave_time: time_obj(10, 0),
   return_time: time_obj(11, 30)
 )
 EventOption.find_or_create_by!(
-  event_id: e.id, 
-  description: "Craft", 
-  cost: 1, 
-  office_holds_cash: true, 
+  event_id: e.id,
+  description: "Craft",
+  cost: 1,
+  office_holds_cash: true,
   transportation_required: false,
   leave_time: time_obj(9, 0),
   return_time: time_obj(10, 30)
@@ -225,7 +225,7 @@ Student.all.each do |student|
     end
   end
 end
-  
+
 # Randomly assign `student_life_holds_cash` to true for 20% of students
 students = Student.all.to_a
 students.sample((students.size * 0.2).ceil).each do |student|
@@ -233,8 +233,8 @@ students.sample((students.size * 0.2).ceil).each do |student|
   puts "Updated student #{student.short_name} to student life holds cash."
 end
 
-#radomally delete 15 student life event selections to simulate students not signing up for events
-StudentEventOption.all.sample(15).each{|seo| seo.destroy}
+# radomally delete 15 student life event selections to simulate students not signing up for events
+StudentEventOption.all.sample(15).each { |seo| seo.destroy }
 
 
 puts "Database seeding completed!"

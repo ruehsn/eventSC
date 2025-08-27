@@ -47,20 +47,20 @@ emails.uniq.each do |email|
         end
       end
     else
-      errors << [email, user.errors.full_messages.join(', ')]
+      errors << [ email, user.errors.full_messages.join(', ') ]
       puts "Failed: #{email} => #{user.errors.full_messages.join(', ')}"
     end
   rescue => e
-    errors << [email, e.message]
+    errors << [ email, e.message ]
     puts "Error processing #{email}: #{e.class} #{e.message}"
   end
 end
 
-puts "\nSummary:";
-puts "  Created admins: #{count_created}";
-puts "  Updated to admin: #{count_updated}";
-puts "  Total processed: #{emails.uniq.size}";
+puts "\nSummary:"
+puts "  Created admins: #{count_created}"
+puts "  Updated to admin: #{count_updated}"
+puts "  Total processed: #{emails.uniq.size}"
 if errors.any?
-  puts "  Errors: #{errors.size}";
+  puts "  Errors: #{errors.size}"
   errors.each { |email, msg| puts "    #{email}: #{msg}" }
 end

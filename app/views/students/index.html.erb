@@ -13,6 +13,9 @@
       <th>Current Survey</th>
       <th>Details</th>
       <th>Parent Email</th>
+      <% if admin_user? %>
+        <th>Actions</th>
+      <% end %>
     </tr>
   </thead>
   <tbody>
@@ -25,12 +28,18 @@
         <td><%= student.gender %></td>
         <td><%= student.major %></td>
         <td>
-          <%= link_to "Edit event selection", event_signup_student_path(student) %>
+          <%= link_to "Change event selection", event_signup_student_path(student) %>
         </td>
         <td>
           <%= link_to "Student Details", student_path(student) %> <!-- Link to the show action -->
         </td>
         <td><%= student.parent_email %></td>
+        <% if admin_user? %>
+          <td>
+            <%= link_to "Edit", edit_student_path(student) %>
+            <%= link_to "Delete", student_path(student), method: :delete, confirm: "Are you sure?", data: { turbo_method: :delete } %>
+          </td>
+        <% end %>
       </tr>
     <% end %>
   </tbody>

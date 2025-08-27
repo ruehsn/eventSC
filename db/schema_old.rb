@@ -56,8 +56,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_06_120000) do
     t.integer "event_option_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["event_option_id"], name: "index_student_event_options_on_event_option_id"
-    t.index ["student_id"], name: "index_student_event_options_on_student_id"
+    t.index [ "event_option_id" ], name: "index_student_event_options_on_event_option_id"
+    t.index [ "student_id" ], name: "index_student_event_options_on_student_id"
   end
 
   create_table "student_event_options", force: :cascade do |t|
@@ -66,9 +66,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_06_120000) do
     t.integer "event_option_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["event_id"], name: "index_student_event_options_on_event_id"
-    t.index ["event_option_id"], name: "index_student_event_options_on_event_option_id"
-    t.index ["student_id"], name: "index_student_event_options_on_student_id"
+    t.index [ "event_id" ], name: "index_student_event_options_on_event_id"
+    t.index [ "event_option_id" ], name: "index_student_event_options_on_event_option_id"
+    t.index [ "student_id" ], name: "index_student_event_options_on_student_id"
   end
 
   create_table "students", force: :cascade do |t|
@@ -84,8 +84,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_06_120000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "student_life_holds_cash", default: false
-    t.index ["advisor_id"], name: "index_students_on_advisor_id"
-    t.index ["living_area_id"], name: "index_students_on_living_area_id"
+    t.index [ "advisor_id" ], name: "index_students_on_advisor_id"
+    t.index [ "living_area_id" ], name: "index_students_on_living_area_id"
   end
 
   create_table "vehicles", force: :cascade do |t|

@@ -32,6 +32,7 @@
         <% if admin_user? %>
           <td>
             <%= link_to "Edit", edit_advisor_path(advisor) %>
+            <%= link_to "Delete", advisor_path(advisor), method: :delete, confirm: "Are you sure?", data: { turbo_method: :delete } %>
           </td>
         <% end %>
       </tr>

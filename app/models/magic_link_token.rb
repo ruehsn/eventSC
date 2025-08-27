@@ -1,0 +1,2 @@
+class MagicLinkToken < ApplicationRecord
+end

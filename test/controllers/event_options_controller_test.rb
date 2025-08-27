@@ -2,6 +2,7 @@ require "test_helper"
 
 class EventOptionsControllerTest < ActionDispatch::IntegrationTest
   setup do
+    login_as_admin_integration
     @event_option = event_options(:one)
   end
 
