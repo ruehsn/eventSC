@@ -1,0 +1,231 @@
+<<% content_for :title, "#{@living_area.name} - Floor Plan" %>
+
+<!-- Floor Plan CSS -->
+<style>
+  .floor-plan {
+    position: relative;
+    background: #f8f9fa;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    min-height: 600px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow: hidden;
+    background-image: 
+      linear-gradient(rgba(0,0,0,.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  
+  .room {
+    position: absolute;
+    border: 2px solid #6c757d;
+    background: #ffffff;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    min-width: 80px;
+    min-height: 60px;
+  }
+  
+  .room.occupied {
+    background: #e7f3ff;
+    border-color: #007bff;
+  }
+  
+  .room.full {
+    background: #ffe6e6;
+    border-color: #dc3545;
+  }
+  
+  .room-header {
+    font-weight: bold;
+    font-size: 12px;
+    margin-bottom: 4px;
+    text-align: center;
+    color: #495057;
+  }
+  
+  .room-students {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    flex-grow: 1;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .student-photo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  
+  .student-placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e9ecef;
+    border: 2px dashed #adb5bd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #6c757d;
+  }
+  
+  .unassigned-students {
+    background: #f8f9fa;
+    border: 2px dashed #6c757d;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 20px;
+  }
+  
+  .student-card {
+    display: inline-flex;
+    align-items: center;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 8px;
+    margin: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  
+  .student-card img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-right: 8px;
+    object-fit: cover;
+  }
+  
+  .student-card .name {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .capacity-indicator {
+    font-size: 10px;
+    color: #6c757d;
+    text-align: center;
+    margin-top: 2px;
+  }
+</style>
+
+<div class="flex flex-col space-y-6">
+  <div class="flex justify-between items-center">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+      <%= @living_area.name %> - Floor Plan
+    </h1>
+    <div class="flex space-x-2">
+      <%= link_to "Edit Assignments", edit_rooming_assignment_path(@living_area), 
+          class: "btn btn-primary" %>
+      <%= link_to "Manage Rooms", living_area_rooms_path(@living_area), 
+          class: "btn btn-secondary" %>
+      <%= link_to "Back to Overview", rooming_assignments_path, 
+          class: "btn btn-outline" %>
+    </div>
+  </div>
+
+  <!-- Room Statistics -->
+  <div class="grid grid-cols-3 gap-4 bg-white dark:bg-gray-800 rounded-lg p-4">
+    <div class="text-center">
+      <div class="text-2xl font-bold text-blue-600"><%= @living_area.total_capacity %></div>
+      <div class="text-sm text-gray-600 dark:text-gray-400">Total Capacity</div>
+    </div>
+    <div class="text-center">
+      <div class="text-2xl font-bold text-green-600"><%= @living_area.occupied_spaces %></div>
+      <div class="text-sm text-gray-600 dark:text-gray-400">Occupied</div>
+    </div>
+    <div class="text-center">
+      <div class="text-2xl font-bold text-orange-600"><%= @living_area.available_spaces %></div>
+      <div class="text-sm text-gray-600 dark:text-gray-400">Available</div>
+    </div>
+  </div>
+
+  <!-- Floor Plan -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg p-6">
+    <h2 class="text-xl font-semibold mb-4">Floor Plan</h2>
+    
+    <div class="floor-plan">
+      <% @living_area.rooms.each do |room| %>
+        <div class="room <%= 'occupied' if room.students.any? %> <%= 'full' if room.full? %>"
+             style="left: <%= room.x_position %>px; top: <%= room.y_position %>px; width: <%= room.width %>px; height: <%= room.height %>px;">
+          
+          <div class="room-header">
+            Room <%= room.room_number %>
+          </div>
+          
+          <div class="room-students">
+            <% room.students.each do |student| %>
+              <% if student.photo.attached? %>
+                <%= image_tag student.photo, class: "student-photo", 
+                    title: "#{student.display_name} (#{student.short_name})" %>
+              <% else %>
+                <div class="student-placeholder" title="<%= student.display_name %> (<%= student.short_name %>)">
+                  <%= student.first_name&.first || '?' %>
+                </div>
+              <% end %>
+            <% end %>
+            
+            <!-- Show empty spots -->
+            <% room.available_spaces.times do %>
+              <div class="student-placeholder">+</div>
+            <% end %>
+          </div>
+          
+          <div class="capacity-indicator">
+            <%= room.students.count %>/<%= room.capacity %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    
+    <!-- Legend -->
+    <div class="mt-4 flex space-x-6 text-sm">
+      <div class="flex items-center">
+        <div class="w-4 h-4 bg-white border-2 border-gray-400 rounded mr-2"></div>
+        <span>Available</span>
+      </div>
+      <div class="flex items-center">
+        <div class="w-4 h-4 bg-blue-100 border-2 border-blue-500 rounded mr-2"></div>
+        <span>Occupied</span>
+      </div>
+      <div class="flex items-center">
+        <div class="w-4 h-4 bg-red-100 border-2 border-red-500 rounded mr-2"></div>
+        <span>Full</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Unassigned Students -->
+  <% if @students_without_rooms.any? %>
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-6">
+      <h2 class="text-xl font-semibold mb-4 text-orange-600">Unassigned Students</h2>
+      <div class="unassigned-students">
+        <% @students_without_rooms.each do |student| %>
+          <div class="student-card">
+            <% if student.photo.attached? %>
+              <%= image_tag student.photo, alt: student.display_name %>
+            <% else %>
+              <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-2">
+                <%= student.first_name&.first || '?' %>
+              </div>
+            <% end %>
+            <div class="name"><%= student.short_name %></div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
+  <p>Find me in app/views/rooming_assignments/show.html.erb</p>
+</div>

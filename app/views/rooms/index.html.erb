@@ -1,0 +1,121 @@
+<% content_for :title, "Rooms - #{@living_area.name}" %>
+
+<div class="flex flex-col space-y-6">
+  <div class="flex justify-between items-center">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+      Rooms - <%= @living_area.name %>
+    </h1>
+    <div class="flex space-x-2">
+      <%= link_to "New Room", new_living_area_room_path(@living_area), 
+          class: "btn btn-primary" %>
+      <%= link_to "Back to Living Areas", living_areas_path, 
+          class: "btn btn-secondary" %>
+      <%= link_to "Room Assignments", rooming_assignment_path(@living_area), 
+          class: "btn btn-outline" %>
+    </div>
+  </div>
+
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+    <table class="w-full">
+      <thead class="bg-gray-50 dark:bg-gray-700">
+        <tr>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            Room Number
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            Capacity
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            Occupancy
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            Students
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            Position
+          </th>
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+        <% @rooms.each do |room| %>
+          <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm font-medium text-gray-900 dark:text-white">
+                <%= room.room_number %>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900 dark:text-white">
+                <%= room.capacity %>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-900 dark:text-white">
+                <%= room.students.count %>/<%= room.capacity %>
+                <% if room.full? %>
+                  <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                    Full
+                  </span>
+                <% elsif room.students.any? %>
+                  <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                    Partial
+                  </span>
+                <% else %>
+                  <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    Available
+                  </span>
+                <% end %>
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="text-sm text-gray-900 dark:text-white">
+                <% if room.students.any? %>
+                  <% room.students.each do |student| %>
+                    <div class="mb-1">
+                      <%= link_to student.short_name, student_path(student), 
+                          class: "text-blue-600 hover:text-blue-800",
+                          title: student.display_name %>
+                    </div>
+                    </div>
+                  <% end %>
+                <% else %>
+                  <span class="text-gray-500 italic">No students assigned</span>
+                <% end %>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-sm text-gray-500">
+                (<%= room.x_position %>, <%= room.y_position %>)<br>
+                <%= room.width %>×<%= room.height %>
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+              <div class="flex space-x-2">
+                <%= link_to "View", room_path(room), 
+                    class: "text-blue-600 hover:text-blue-900" %>
+                <%= link_to "Edit", edit_room_path(room), 
+                    class: "text-indigo-600 hover:text-indigo-900" %>
+                <%= link_to "Delete", room_path(room), 
+                    method: :delete, 
+                    confirm: "Are you sure? This will unassign all students from this room.",
+                    class: "text-red-600 hover:text-red-900",
+                    data: { turbo_method: :delete } %>
+              </div>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <% if @rooms.empty? %>
+    <div class="text-center py-12">
+      <p class="text-gray-500 text-lg">No rooms created yet.</p>
+      <%= link_to "Create First Room", new_living_area_room_path(@living_area), 
+          class: "btn btn-primary mt-4" %>
+    </div>
+  <% end %>
+</div>

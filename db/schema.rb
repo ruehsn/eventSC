@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_08_035027) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_27_034418) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -83,6 +83,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_08_035027) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "rooms", force: :cascade do |t|
+    t.string "room_number"
+    t.integer "capacity"
+    t.integer "living_area_id", null: false
+    t.integer "x_position"
+    t.integer "y_position"
+    t.integer "width"
+    t.integer "height"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["living_area_id"], name: "index_rooms_on_living_area_id"
+  end
+
   create_table "student_event_options", force: :cascade do |t|
     t.integer "student_id", null: false
     t.integer "event_id", null: false
@@ -109,8 +122,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_08_035027) do
     t.datetime "updated_at", null: false
     t.string "external_id"
     t.string "parent_email"
+    t.integer "room_id"
     t.index ["advisor_id"], name: "index_students_on_advisor_id"
     t.index ["living_area_id"], name: "index_students_on_living_area_id"
+    t.index ["room_id"], name: "index_students_on_room_id"
     t.index ["short_name"], name: "index_students_on_short_name", unique: true
   end
 
@@ -125,9 +140,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_08_035027) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "rooms", "living_areas"
   add_foreign_key "student_event_options", "event_options"
   add_foreign_key "student_event_options", "events"
   add_foreign_key "student_event_options", "students"
   add_foreign_key "students", "advisors"
   add_foreign_key "students", "living_areas"
+  add_foreign_key "students", "rooms"
 end

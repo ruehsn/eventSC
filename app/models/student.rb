@@ -1,9 +1,12 @@
 class Student < ApplicationRecord
     belongs_to :advisor
     belongs_to :living_area
+    belongs_to :room, optional: true
     has_many :student_event_options, dependent: :destroy
     has_many :events,        through: :student_event_options
     has_many :event_options, through: :student_event_options
+    
+    has_one_attached :photo
 
     validates :short_name, presence: true, uniqueness: true
 
@@ -16,5 +19,14 @@ class Student < ApplicationRecord
                .where(event_options: { office_holds_cash: true })
                .where(students: { student_life_holds_cash: true })
                .where(student_event_options: { event_id: event_id })
+    end
+    
+    def photo_url
+      return nil unless photo.attached?
+      Rails.application.routes.url_helpers.rails_blob_path(photo, only_path: true)
+    end
+    
+    def display_name
+      "#{first_name} #{last_name}".strip
     end
 end

@@ -1,0 +1,48 @@
+<<% content_for :title, "Rooming Assignments" %>
+
+<div class="flex flex-col space-y-6">
+  <div class="flex justify-between items-center">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Rooming Assignments</h1>
+    <%= link_to "Manage Rooms", living_areas_path, class: "btn btn-secondary" %>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+    <% @living_areas.each do |living_area| %>
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+        <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
+          <%= living_area.name %>
+        </h2>
+        
+        <div class="space-y-2 mb-4">
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-600 dark:text-gray-400">Total Capacity:</span>
+            <span class="font-medium"><%= living_area.total_capacity %></span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-600 dark:text-gray-400">Occupied:</span>
+            <span class="font-medium"><%= living_area.occupied_spaces %></span>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-600 dark:text-gray-400">Available:</span>
+            <span class="font-medium text-green-600"><%= living_area.available_spaces %></span>
+          </div>
+        </div>
+
+        <div class="flex space-x-2">
+          <%= link_to "View Floor Plan", rooming_assignment_path(living_area), 
+              class: "btn btn-primary flex-1 text-center" %>
+          <%= link_to "Edit Assignments", edit_rooming_assignment_path(living_area), 
+              class: "btn btn-secondary flex-1 text-center" %>
+        </div>
+        
+        <div class="mt-4">
+          <%= link_to "Manage Rooms", living_area_rooms_path(living_area), 
+              class: "text-sm text-blue-600 hover:text-blue-800" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>v>
+  <h1 class="font-bold text-4xl">RoomingAssignments#index</h1>
+  <p>Find me in app/views/rooming_assignments/index.html.erb</p>
+</div>

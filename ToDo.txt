@@ -1,11 +1,14 @@
 Next Actions
 ======================================
-Login
- + create some automated test
- System/UI Tests
+Hide Student Edit/Delete actions Actions
+Spruce up Student Detail View
+  -format table
+  -table 
 
 
 create a  test for Student/Advisor CRUD: Test full create/edit/delete flows for students/advisors.
+  - decide where to edit student pages
+
 create a  test for Event Option Logic: Test “Add Another Option” button and value copying.
 create a  test for Navigation Bar: Confirm correct links for logged-in/out/admin users.
 create a  test for TDF Import: Test importing TDF files and normalization of values.

@@ -36,6 +36,9 @@
         <a href="<%= students_path %>" class="hover:text-gray-600">All Students</a>
         <a href="<%= advisors_path %>" class="hover:text-gray-600">Advisors</a>
         <a href="<%= events_path %>" class="hover:text-gray-600">Events</a>
+        <% if admin_user? %>
+          <a href="<%= rooming_assignments_path %>" class="hover:text-gray-600">Room Assignments</a>
+        <% end %>
         
         <% if Rails.env.staging? || ENV['FORCE_STAGING'] %>
           <div class="relative group">

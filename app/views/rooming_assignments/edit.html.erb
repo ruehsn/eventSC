@@ -1,0 +1,773 @@
+<% content_for :title, "Edit Room Assignments - #{@living_area.name}" %>
+
+<!-- Include the same CSS from show view plus drag-drop styles -->
+<style>
+  .floor-plan {
+    position: relative;
+    background: #f8f9fa;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    min-height: 600px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow: hidden;
+    background-image: 
+      linear-gradient(rgba(0,0,0,.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  
+  .room {
+    position: absolute;
+    border: 2px solid #6c757d;
+    background: #ffffff;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    min-width: 160px;
+    min-height: 120px;
+    transition: all 0.2s ease;
+  }
+  
+  .room.drag-over {
+    background: #fff3cd;
+    border-color: #ffc107;
+    transform: scale(1.05);
+  }
+  
+  .room.occupied {
+    background: #e7f3ff;
+    border-color: #007bff;
+  }
+  
+  .room.full {
+    background: #ffe6e6;
+    border-color: #dc3545;
+  }
+  
+  .room-header {
+    font-weight: bold;
+    font-size: 12px;
+    margin-bottom: 4px;
+    text-align: center;
+    color: #495057;
+  }
+  
+  .room-students {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex-grow: 1;
+    align-items: flex-start;
+    justify-content: space-around;
+    min-height: 70px;
+    overflow: visible;
+    width: 100%;
+  }
+  
+  .student-photo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    cursor: grab;
+    transition: transform 0.2s ease;
+  }
+  
+  .student-photo:hover {
+    transform: scale(1.1);
+  }
+  
+  .student-photo.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+    transform: rotate(5deg);
+  }
+  
+  .student-placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e9ecef;
+    border: 2px dashed #adb5bd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #6c757d;
+  }
+  
+  .student-placeholder[data-student-id] {
+    cursor: grab;
+    transition: transform 0.2s ease;
+  }
+  
+  .student-placeholder[data-student-id]:hover {
+    transform: scale(1.1);
+  }
+  
+  .student-placeholder.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+    transform: rotate(5deg);
+  }
+  
+  .room-student-card {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 6px;
+    margin: 2px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    cursor: grab;
+    transition: transform 0.2s ease;
+    min-width: 60px;
+    max-width: 65px;
+    text-align: center;
+    flex: 0 0 auto;
+  }
+  
+  .room-student-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  
+  .room-student-card.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+    transform: rotate(3deg);
+  }
+  
+  .room-student-card img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    margin-bottom: 3px;
+    object-fit: cover;
+    border: 1px solid #fff;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+  
+  .room-student-card .name {
+    font-size: 9px;
+    font-weight: 500;
+    color: #495057;
+    line-height: 1.1;
+    max-width: 58px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-top: 1px;
+  }
+  
+  .room-student-card .avatar-placeholder {
+    width: 32px;
+    height: 32px;
+    background: #e9ecef;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 3px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #6c757d;
+    border: 1px solid #adb5bd;
+  }
+  
+  .unassigned-students {
+    background: #f8f9fa;
+    border: 2px dashed #6c757d;
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 20px;
+    min-height: 100px;
+  }
+  
+  .unassigned-students.drag-over {
+    background: #fff3cd;
+    border-color: #ffc107;
+  }
+  
+  .student-card {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 6px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    cursor: grab;
+    transition: transform 0.2s ease;
+    min-width: 80px;
+    text-align: center;
+  }
+  
+  .student-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  }
+  
+  .student-card.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+    transform: rotate(3deg);
+  }
+  
+  .student-card img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    margin-bottom: 6px;
+    object-fit: cover;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  
+  .student-card .name {
+    font-size: 12px;
+    font-weight: 500;
+    color: #495057;
+    margin-top: 2px;
+  }
+  
+  .student-card .avatar-placeholder {
+    width: 48px;
+    height: 48px;
+    background: #e9ecef;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 6px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #6c757d;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+  
+  .capacity-indicator {
+    font-size: 10px;
+    color: #6c757d;
+    text-align: center;
+    margin-top: 2px;
+  }
+  
+  .save-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+  }
+</style>
+
+<div class="flex flex-col space-y-6">
+  <div class="flex justify-between items-center">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+      Edit Room Assignments - <%= @living_area.name %>
+    </h1>
+    <div class="flex space-x-2">
+      <%= link_to "View Floor Plan", rooming_assignment_path(@living_area), 
+          class: "btn btn-secondary" %>
+      <%= link_to "Back to Overview", rooming_assignments_path, 
+          class: "btn btn-outline" %>
+    </div>
+  </div>
+
+  <!-- Instructions -->
+  <div class="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg p-4">
+    <h3 class="font-semibold text-blue-800 dark:text-blue-200 mb-2">How to assign rooms:</h3>
+    <ul class="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+      <li>• Drag student photos/cards to rooms on the floor plan</li>
+      <li>• Drag students back to "Unassigned" area to remove room assignment</li>
+      <li>• Red rooms are at capacity - remove a student first before adding another</li>
+      <li>• Click "Save Assignments" when finished</li>
+    </ul>
+  </div>
+
+  <%= form_with url: rooming_assignment_path(@living_area), method: :patch, 
+      local: true, id: "assignment-form" do |form| %>
+    
+    <!-- Floor Plan -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-6">
+      <h2 class="text-xl font-semibold mb-4">Floor Plan</h2>
+      
+      <div class="floor-plan" id="floor-plan">
+        <% @living_area.rooms.each do |room| %>
+          <div class="room <%= 'occupied' if room.students.any? %> <%= 'full' if room.full? %>"
+               data-room-id="<%= room.id %>"
+               data-capacity="<%= room.capacity %>"
+               style="left: <%= room.x_position %>px; top: <%= room.y_position %>px; width: <%= room.width %>px; height: <%= room.height %>px;">
+            
+            <div class="room-header">
+              Room <%= room.room_number %>
+            </div>
+            
+            <div class="room-students" data-room-id="<%= room.id %>">
+              <% room.students.each do |student| %>
+                <div class="room-student-card" data-student-id="<%= student.id %>" draggable="true">
+                  <% if student.photo.attached? %>
+                    <%= image_tag student.photo, alt: student.display_name %>
+                  <% else %>
+                    <div class="avatar-placeholder">
+                      <%= student.first_name&.first || '?' %>
+                    </div>
+                  <% end %>
+                  <div class="name"><%= student.short_name %></div>
+                </div>
+              <% end %>
+              
+              <!-- Show empty spots -->
+              <% room.available_spaces.times do %>
+                <div class="student-placeholder">+</div>
+              <% end %>
+            </div>
+            
+            <div class="capacity-indicator">
+              <span class="current-count"><%= room.students.count %></span>/<%= room.capacity %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Unassigned Students -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-6">
+      <h2 class="text-xl font-semibold mb-4 text-orange-600">
+        Unassigned Students 
+        <span class="text-sm font-normal text-gray-600">
+          (Drag to rooms above)
+        </span>
+      </h2>
+      
+      <div class="unassigned-students" id="unassigned-area">
+        <% @students_without_rooms.each do |student| %>
+          <div class="student-card draggable-student" 
+               draggable="true" 
+               data-student-id="<%= student.id %>">
+            <% if student.photo.attached? %>
+              <%= image_tag student.photo, alt: student.display_name %>
+            <% else %>
+              <div class="avatar-placeholder">
+                <%= student.first_name&.first || '?' %>
+              </div>
+            <% end %>
+            <div class="name"><%= student.short_name %></div>
+          </div>
+        <% end %>
+      </div>
+      
+      <!-- Hidden template students for JavaScript -->
+      <div style="display: none;">
+        <% (@students_with_rooms + @students_without_rooms).each do |student| %>
+          <div class="student-card template-student" 
+               data-student-id="<%= student.id %>">
+            <% if student.photo.attached? %>
+              <%= image_tag student.photo, alt: student.display_name %>
+            <% else %>
+              <div class="avatar-placeholder">
+                <%= student.first_name&.first || '?' %>
+              </div>
+            <% end %>
+            <div class="name"><%= student.short_name %></div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Hidden form inputs for assignments -->
+    <div id="assignment-inputs"></div>
+
+    <!-- Save Button -->
+    <div class="save-button">
+      <%= form.submit "Save Assignments", 
+          class: "btn btn-primary btn-lg shadow-lg", 
+          id: "save-assignments" %>
+    </div>
+
+  <% end %>
+</div>
+
+<!-- Full JavaScript for drag and drop functionality -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  let draggedElement = null;
+  let assignments = {};
+
+  // Initialize assignments from current state
+  function initializeAssignments() {
+    // Clear assignments
+    assignments = {};
+    
+    // Collect current room assignments
+    document.querySelectorAll('.room-students [data-student-id]').forEach(element => {
+      const studentId = element.dataset.studentId;
+      const roomContainer = element.closest('.room-students');
+      const roomId = roomContainer ? roomContainer.dataset.roomId : null;
+      if (roomId) {
+        assignments[studentId] = roomId;
+      }
+    });
+    
+    // Collect unassigned students
+    document.querySelectorAll('#unassigned-area [data-student-id]').forEach(element => {
+      const studentId = element.dataset.studentId;
+      assignments[studentId] = 'unassigned';
+    });
+    
+    updateFormInputs();
+    console.log('Initialized assignments:', assignments);
+  }
+
+  // Make elements draggable
+  function makeElementsDraggable() {
+    // Make all draggable elements draggable
+    document.querySelectorAll('[data-student-id]').forEach(element => {
+      element.draggable = true;
+      element.addEventListener('dragstart', handleDragStart);
+      element.addEventListener('dragend', handleDragEnd);
+    });
+  }
+
+  // Drag start
+  function handleDragStart(e) {
+    draggedElement = e.target;
+    e.target.classList.add('dragging');
+    
+    // Get student ID from the element or its parent
+    const studentId = e.target.dataset.studentId || 
+                     e.target.closest('[data-student-id]')?.dataset.studentId;
+    
+    if (studentId) {
+      e.dataTransfer.setData('text/plain', studentId);
+      e.dataTransfer.effectAllowed = 'move';
+      console.log('Started dragging student:', studentId);
+    }
+  }
+
+  // Drag end
+  function handleDragEnd(e) {
+    e.target.classList.remove('dragging');
+    // Clean up all drag-over classes
+    document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+    draggedElement = null;
+  }
+
+  // Make rooms and unassigned area drop targets
+  function makeDropTargets() {
+    // Room drop targets
+    document.querySelectorAll('.room-students').forEach(roomArea => {
+      roomArea.addEventListener('dragover', handleDragOver);
+      roomArea.addEventListener('drop', handleRoomDrop);
+      roomArea.addEventListener('dragenter', handleDragEnter);
+      roomArea.addEventListener('dragleave', handleDragLeave);
+    });
+
+    // Unassigned area drop target
+    const unassignedArea = document.getElementById('unassigned-area');
+    if (unassignedArea) {
+      unassignedArea.addEventListener('dragover', handleDragOver);
+      unassignedArea.addEventListener('drop', handleUnassignedDrop);
+      unassignedArea.addEventListener('dragenter', handleDragEnter);
+      unassignedArea.addEventListener('dragleave', handleDragLeave);
+    }
+  }
+
+  function handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  }
+
+  function handleDragEnter(e) {
+    e.preventDefault();
+    const room = e.target.closest('.room');
+    const unassigned = e.target.closest('#unassigned-area');
+    
+    if (room) {
+      room.classList.add('drag-over');
+    } else if (unassigned) {
+      unassigned.classList.add('drag-over');
+    }
+  }
+
+  function handleDragLeave(e) {
+    // Only remove drag-over if we're actually leaving the element
+    if (!e.currentTarget.contains(e.relatedTarget)) {
+      const room = e.target.closest('.room');
+      const unassigned = e.target.closest('#unassigned-area');
+      
+      if (room) {
+        room.classList.remove('drag-over');
+      } else if (unassigned) {
+        unassigned.classList.remove('drag-over');
+      }
+    }
+  }
+
+  function handleRoomDrop(e) {
+    e.preventDefault();
+    const studentId = e.dataTransfer.getData('text/plain');
+    const roomArea = e.target.closest('.room-students');
+    const room = e.target.closest('.room');
+    
+    if (!studentId || !roomArea || !room) return;
+    
+    const roomId = roomArea.dataset.roomId;
+    const capacity = parseInt(room.dataset.capacity);
+    
+    // Remove drag-over styling
+    room.classList.remove('drag-over');
+    
+    // Check capacity - count actual students by looking for room-student-cards or old container structure
+    const roomStudentCards = roomArea.querySelectorAll('.room-student-card[data-student-id]').length;
+    const studentContainers = roomArea.querySelectorAll('.student-photo-container').length;
+    const directStudentElements = roomArea.querySelectorAll('.student-photo[data-student-id], .student-placeholder[data-student-id]').length;
+    // Use the highest count to handle both old and new structures
+    const currentStudentsInRoom = Math.max(roomStudentCards, studentContainers, directStudentElements);
+    const isAlreadyInRoom = assignments[studentId] === roomId;
+    const wouldExceedCapacity = !isAlreadyInRoom && currentStudentsInRoom >= capacity;
+    
+    console.log('Room drop debug:', {
+      roomId: roomId,
+      capacity: capacity,
+      currentStudentsInRoom: currentStudentsInRoom,
+      roomStudentCards: roomStudentCards,
+      studentContainers: studentContainers,
+      directStudentElements: directStudentElements,
+      isAlreadyInRoom: isAlreadyInRoom,
+      wouldExceedCapacity: wouldExceedCapacity,
+      studentId: studentId,
+      currentAssignment: assignments[studentId]
+    });
+    
+    if (wouldExceedCapacity) {
+      alert(`Room ${room.querySelector('.room-header').textContent} is at capacity (${capacity} students)! Currently has ${currentStudentsInRoom} students.`);
+      return;
+    }
+    
+    console.log('Dropping student', studentId, 'in room', roomId);
+    
+    // Update assignment
+    moveStudentToRoom(studentId, roomId, roomArea);
+    updateRoomDisplays();
+    updateFormInputs();
+  }
+
+  function handleUnassignedDrop(e) {
+    e.preventDefault();
+    const studentId = e.dataTransfer.getData('text/plain');
+    const unassignedArea = document.getElementById('unassigned-area');
+    
+    if (!studentId) return;
+    
+    // Remove drag-over styling
+    unassignedArea.classList.remove('drag-over');
+    
+    console.log('Moving student', studentId, 'to unassigned');
+    
+    // Update assignment
+    moveStudentToUnassigned(studentId);
+    updateRoomDisplays();
+    updateFormInputs();
+  }
+
+  function moveStudentToRoom(studentId, roomId, roomArea) {
+    // Remove student from current location
+    const currentElement = document.querySelector(`[data-student-id="${studentId}"]`);
+    if (currentElement) {
+      currentElement.remove();
+    }
+    
+    // Update assignment
+    assignments[studentId] = roomId;
+    
+    // Find student data for display
+    const studentData = getStudentData(studentId);
+    if (studentData) {
+      createStudentInRoom(studentData, roomArea);
+    }
+    
+    console.log('Moved student', studentId, 'to room', roomId, '. New assignment:', assignments[studentId]);
+  }
+
+  function moveStudentToUnassigned(studentId) {
+    // Remove student from current location
+    const currentElement = document.querySelector(`[data-student-id="${studentId}"]`);
+    if (currentElement) {
+      currentElement.remove();
+    }
+    
+    // Update assignment
+    assignments[studentId] = 'unassigned';
+    
+    // Find student data and add to unassigned area
+    const studentData = getStudentData(studentId);
+    if (studentData) {
+      createStudentCardInUnassigned(studentData);
+    }
+  }
+
+  function getStudentData(studentId) {
+    // Look for student data in the original page data
+    const originalCard = document.querySelector(`.template-student[data-student-id="${studentId}"]`);
+    if (originalCard) {
+      return {
+        id: studentId,
+        name: originalCard.querySelector('.name').textContent,
+        hasPhoto: originalCard.querySelector('img') !== null,
+        photoSrc: originalCard.querySelector('img')?.src,
+        initial: originalCard.querySelector('.name').textContent.charAt(0)
+      };
+    }
+    
+    // Fallback - extract from any existing element
+    const anyElement = document.querySelector(`[data-student-id="${studentId}"]`);
+    if (anyElement) {
+      const title = anyElement.title || anyElement.getAttribute('title') || '';
+      return {
+        id: studentId,
+        name: title.split('(')[0].trim(),
+        hasPhoto: anyElement.tagName === 'IMG',
+        photoSrc: anyElement.tagName === 'IMG' ? anyElement.src : null,
+        initial: title.charAt(0) || '?'
+      };
+    }
+    
+    return null;
+  }
+
+  function createStudentInRoom(studentData, roomArea) {
+    const card = document.createElement('div');
+    card.className = 'room-student-card';
+    card.dataset.studentId = studentData.id;
+    card.draggable = true;
+    
+    if (studentData.hasPhoto && studentData.photoSrc) {
+      const img = document.createElement('img');
+      img.src = studentData.photoSrc;
+      img.alt = studentData.name;
+      card.appendChild(img);
+    } else {
+      const placeholder = document.createElement('div');
+      placeholder.className = 'avatar-placeholder';
+      placeholder.textContent = studentData.initial;
+      card.appendChild(placeholder);
+    }
+    
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'name';
+    nameDiv.textContent = studentData.name;
+    card.appendChild(nameDiv);
+    
+    roomArea.appendChild(card);
+    makeElementsDraggable();
+  }
+
+  function createStudentCardInUnassigned(studentData) {
+    const unassignedArea = document.getElementById('unassigned-area');
+    
+    const card = document.createElement('div');
+    card.className = 'student-card draggable-student';
+    card.draggable = true;
+    card.dataset.studentId = studentData.id;
+    
+    if (studentData.hasPhoto && studentData.photoSrc) {
+      const img = document.createElement('img');
+      img.src = studentData.photoSrc;
+      img.alt = studentData.name;
+      card.appendChild(img);
+    } else {
+      const avatar = document.createElement('div');
+      avatar.className = 'avatar-placeholder';
+      avatar.textContent = studentData.initial;
+      card.appendChild(avatar);
+    }
+    
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'name';
+    nameDiv.textContent = studentData.name;
+    card.appendChild(nameDiv);
+    
+    unassignedArea.appendChild(card);
+    makeElementsDraggable();
+  }
+
+  function updateRoomDisplays() {
+    document.querySelectorAll('.room').forEach(room => {
+      const roomStudents = room.querySelector('.room-students');
+      
+      // Count students by new cards first, then fall back to old structures
+      const roomStudentCards = roomStudents.querySelectorAll('.room-student-card[data-student-id]').length;
+      const studentContainers = roomStudents.querySelectorAll('.student-photo-container').length;
+      const directStudentElements = roomStudents.querySelectorAll('.student-photo[data-student-id], .student-placeholder[data-student-id]').length;
+      const occupiedCount = Math.max(roomStudentCards, studentContainers, directStudentElements);
+      
+      const capacity = parseInt(room.dataset.capacity);
+      const counterSpan = room.querySelector('.current-count');
+      
+      if (counterSpan) {
+        counterSpan.textContent = occupiedCount;
+      }
+      
+      // Update room styling
+      room.classList.remove('occupied', 'full');
+      if (occupiedCount > 0) {
+        room.classList.add('occupied');
+      }
+      if (occupiedCount >= capacity) {
+        room.classList.add('full');
+      }
+      
+      // Update empty placeholders - remove empty ones first
+      const emptyPlaceholders = roomStudents.querySelectorAll('.student-placeholder:not([data-student-id])');
+      emptyPlaceholders.forEach(p => p.remove());
+      
+      // Add new empty placeholders for available spaces
+      const availableSpaces = Math.max(0, capacity - occupiedCount);
+      for (let i = 0; i < availableSpaces; i++) {
+        const placeholder = document.createElement('div');
+        placeholder.className = 'student-placeholder';
+        placeholder.textContent = '+';
+        roomStudents.appendChild(placeholder);
+      }
+    });
+  }
+
+  function updateFormInputs() {
+    const container = document.getElementById('assignment-inputs');
+    container.innerHTML = '';
+    
+    Object.entries(assignments).forEach(([studentId, roomId]) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = `assignments[${studentId}]`;
+      input.value = roomId;
+      container.appendChild(input);
+    });
+    
+    console.log('Updated form inputs:', assignments);
+  }
+
+  // Initialize everything
+  console.log('Initializing drag and drop...');
+  initializeAssignments();
+  makeElementsDraggable();
+  makeDropTargets();
+  
+  // Update form when save button is clicked
+  document.getElementById('save-assignments')?.addEventListener('click', function() {
+    updateFormInputs();
+  });
+});
+</script>

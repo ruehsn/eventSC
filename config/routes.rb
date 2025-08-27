@@ -1,4 +1,13 @@
 Rails.application.routes.draw do
+  # Rooming assignments
+  resources :rooming_assignments, only: [:index, :show, :edit, :update], path: 'rooming-assignments'
+  
+  # Room management
+  resources :living_areas do
+    resources :rooms, except: [:show]
+  end
+  resources :rooms, only: [:show, :edit, :update, :destroy]
+  
   get "survey", to: "survey#index"
   post "survey/submit", to: "survey#submit"
   resources :students do
