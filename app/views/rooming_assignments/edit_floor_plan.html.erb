@@ -1,0 +1,624 @@
+<% content_for :title, "Edit Floor Plan - #{@living_area.name}" %>
+
+<style>
+  /* Improve button readability */
+  .btn-outline {
+    background-color: #ffffff !important;
+    color: #374151 !important;
+    border-color: #d1d5db !important;
+  }
+  .btn-outline:hover {
+    background-color: #f9fafb !important;
+    color: #111827 !important;
+    border-color: #9ca3af !important;
+  }
+  .dark .btn-outline {
+    background-color: #1f2937 !important;
+    color: #e5e7eb !important;
+    border-color: #4b5563 !important;
+  }
+  .dark .btn-outline:hover {
+    background-color: #374151 !important;
+    color: #f9fafb !important;
+    border-color: #6b7280 !important;
+  }
+
+  .floor-plan-editor {
+    position: relative;
+    background: #f8f9fa;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    min-height: 600px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow: hidden;
+    background-image: 
+      linear-gradient(rgba(0,0,0,.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+    cursor: default;
+  }
+  
+  .editable-room {
+    position: absolute;
+    border: 2px solid #007bff;
+    background: #ffffff;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    cursor: move;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+  
+  .editable-room:hover {
+    border-color: #0056b3;
+    box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+    transform: scale(1.02);
+  }
+  
+  .editable-room.dragging {
+    opacity: 0.8;
+    transform: rotate(2deg);
+    z-index: 1000;
+  }
+  
+  .editable-room.selected {
+    border-color: #28a745;
+    box-shadow: 0 0 0 3px rgba(40,167,69,0.25);
+  }
+  
+  .room-header {
+    font-weight: bold;
+    font-size: 12px;
+    margin-bottom: 4px;
+    text-align: center;
+    color: #495057;
+    pointer-events: none;
+  }
+  
+  .room-info {
+    font-size: 10px;
+    color: #6c757d;
+    text-align: center;
+    pointer-events: none;
+  }
+  
+  .resize-handle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #007bff;
+    border: 1px solid #0056b3;
+    border-radius: 2px;
+    cursor: se-resize;
+  }
+  
+  .resize-handle.bottom-right {
+    bottom: -6px;
+    right: -6px;
+  }
+  
+  .room-controls {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .selected-room-info {
+    background: #e8f5e8;
+    border: 1px solid #28a745;
+    border-radius: 6px;
+    padding: 15px;
+    margin-top: 15px;
+  }
+  
+  .coordinate-display {
+    font-family: monospace;
+    font-size: 12px;
+    color: #6c757d;
+    margin-top: 10px;
+  }
+  
+  .save-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+  }
+  
+  .toolbar {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .snap-grid {
+    background-size: 10px 10px !important;
+  }
+</style>
+
+<div class="flex flex-col space-y-6">
+  <div class="flex justify-between items-center">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+      Edit Floor Plan - <%= @living_area.name %>
+    </h1>
+    <div class="flex space-x-2">
+      <%= link_to "Room Assignments", edit_rooming_assignment_path(@living_area), 
+          class: "btn btn-secondary" %>
+      <%= link_to "View Floor Plan", rooming_assignment_path(@living_area), 
+          class: "btn btn-secondary" %>
+      <%= link_to "Back to Overview", rooming_assignments_path, 
+          class: "btn btn-outline" %>
+    </div>
+  </div>
+
+  <!-- Instructions -->
+  <div class="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg p-4">
+    <h3 class="font-semibold text-blue-800 dark:text-blue-200 mb-2">Floor Plan Editor:</h3>
+    <ul class="text-sm text-blue-700 dark:text-blue-300 space-y-1">
+      <li>• Drag rooms to reposition them on the floor plan</li>
+      <li>• Drag the blue resize handle in the bottom-right corner to resize rooms</li>
+      <li>• Click on a room to see its details and coordinates</li>
+      <li>• Use the toolbar options below for grid snapping and other tools</li>
+      <li>• Click "Save Floor Plan" when finished</li>
+    </ul>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <label class="flex items-center space-x-2">
+      <input type="checkbox" id="snap-to-grid" checked>
+      <span>Snap to Grid (20px)</span>
+    </label>
+    
+    <label class="flex items-center space-x-2">
+      <input type="checkbox" id="show-coordinates">
+      <span>Show Coordinates</span>
+    </label>
+    
+    <button type="button" id="reset-positions" class="btn btn-outline btn-sm">
+      Reset All Positions
+    </button>
+    
+    <button type="button" id="auto-arrange" class="btn btn-outline btn-sm">
+      Auto Arrange
+    </button>
+  </div>
+
+  <%= form_with url: update_floor_plan_rooming_assignment_path(@living_area), 
+      method: :patch, local: true, id: "floor-plan-form" do |form| %>
+    
+    <!-- Floor Plan Editor -->
+    <div class="bg-white dark:bg-gray-800 rounded-lg p-6">
+      <h2 class="text-xl font-semibold mb-4">Floor Plan Layout</h2>
+      
+      <div class="floor-plan-editor" id="floor-plan-editor">
+        <% @rooms.each do |room| %>
+          <div class="editable-room" 
+               data-room-id="<%= room.id %>"
+               data-room-number="<%= room.room_number %>"
+               data-capacity="<%= room.capacity %>"
+               style="left: <%= room.x_position %>px; top: <%= room.y_position %>px; width: <%= room.width %>px; height: <%= room.height %>px;">
+            
+            <div class="room-header">
+              Room <%= room.room_number %> (<%= room.students.count %>/<%= room.capacity %>)
+            </div>
+            
+            <div class="coordinate-display" style="display: none;">
+              (<span class="x-coord"><%= room.x_position %></span>, <span class="y-coord"><%= room.y_position %></span>)
+              <br>
+              <span class="width-coord"><%= room.width %></span>×<span class="height-coord"><%= room.height %></span>
+            </div>
+            
+            <div class="resize-handle bottom-right"></div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Room Controls -->
+    <div class="room-controls">
+      <h3 class="text-lg font-semibold mb-3">Room Controls</h3>
+      <p class="text-gray-600 mb-3">Click on a room above to see its details and make precise adjustments.</p>
+      
+      <div id="selected-room-info" class="selected-room-info" style="display: none;">
+        <h4 class="font-semibold mb-2">Selected Room: <span id="selected-room-title"></span></h4>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-sm font-medium mb-1">X Position</label>
+            <input type="number" id="room-x" class="form-input w-full" step="10" min="0">
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Y Position</label>
+            <input type="number" id="room-y" class="form-input w-full" step="10" min="0">
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Width</label>
+            <input type="number" id="room-width" class="form-input w-full" step="10" min="80">
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Height</label>
+            <input type="number" id="room-height" class="form-input w-full" step="10" min="60">
+          </div>
+        </div>
+        
+        <div class="mt-3 flex gap-2">
+          <button type="button" id="apply-changes" class="btn btn-primary btn-sm">
+            Apply Changes
+          </button>
+          <button type="button" id="center-room" class="btn btn-outline btn-sm">
+            Center Room
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hidden form inputs -->
+    <div id="room-inputs"></div>
+
+    <!-- Save Button -->
+    <div class="save-button">
+      <%= form.submit "Save Floor Plan", 
+          class: "btn btn-primary btn-lg shadow-lg", 
+          id: "save-floor-plan" %>
+    </div>
+
+  <% end %>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  let selectedRoom = null;
+  let isDragging = false;
+  let isResizing = false;
+  let dragStart = { x: 0, y: 0 };
+  let initialPosition = { x: 0, y: 0 };
+  let initialSize = { width: 0, height: 0 };
+  let snapToGrid = true;
+  let showCoordinates = false;
+
+  const floorPlan = document.getElementById('floor-plan-editor');
+  const snapCheckbox = document.getElementById('snap-to-grid');
+  const coordCheckbox = document.getElementById('show-coordinates');
+
+  // Initialize
+  updateFormInputs();
+  setupEventListeners();
+
+  function setupEventListeners() {
+    // Room selection and dragging
+    document.querySelectorAll('.editable-room').forEach(room => {
+      room.addEventListener('mousedown', handleRoomMouseDown);
+      
+      // Resize handle
+      const resizeHandle = room.querySelector('.resize-handle');
+      resizeHandle.addEventListener('mousedown', handleResizeMouseDown);
+    });
+
+    // Global mouse events
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    // Toolbar controls
+    snapCheckbox.addEventListener('change', (e) => {
+      snapToGrid = e.target.checked;
+      if (snapToGrid) {
+        floorPlan.classList.add('snap-grid');
+      } else {
+        floorPlan.classList.remove('snap-grid');
+      }
+    });
+
+    coordCheckbox.addEventListener('change', (e) => {
+      showCoordinates = e.target.checked;
+      document.querySelectorAll('.coordinate-display').forEach(display => {
+        display.style.display = showCoordinates ? 'block' : 'none';
+      });
+    });
+
+    // Room control inputs
+    document.getElementById('room-x').addEventListener('input', updateSelectedRoomFromInputs);
+    document.getElementById('room-y').addEventListener('input', updateSelectedRoomFromInputs);
+    document.getElementById('room-width').addEventListener('input', updateSelectedRoomFromInputs);
+    document.getElementById('room-height').addEventListener('input', updateSelectedRoomFromInputs);
+
+    // Control buttons
+    document.getElementById('apply-changes').addEventListener('click', applyChangesToRoom);
+    document.getElementById('center-room').addEventListener('click', centerSelectedRoom);
+    document.getElementById('reset-positions').addEventListener('click', resetAllPositions);
+    document.getElementById('auto-arrange').addEventListener('click', autoArrangeRooms);
+
+    // Save form
+    document.getElementById('save-floor-plan').addEventListener('click', updateFormInputs);
+  }
+
+  function handleRoomMouseDown(e) {
+    if (e.target.classList.contains('resize-handle')) return;
+    
+    e.preventDefault();
+    const room = e.currentTarget;
+    
+    selectRoom(room);
+    
+    isDragging = true;
+    room.classList.add('dragging');
+    
+    const rect = room.getBoundingClientRect();
+    const floorPlanRect = floorPlan.getBoundingClientRect();
+    
+    dragStart.x = e.clientX;
+    dragStart.y = e.clientY;
+    initialPosition.x = rect.left - floorPlanRect.left;
+    initialPosition.y = rect.top - floorPlanRect.top;
+  }
+
+  function handleResizeMouseDown(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const room = e.target.closest('.editable-room');
+    selectRoom(room);
+    
+    isResizing = true;
+    room.classList.add('dragging');
+    
+    const rect = room.getBoundingClientRect();
+    dragStart.x = e.clientX;
+    dragStart.y = e.clientY;
+    initialSize.width = rect.width;
+    initialSize.height = rect.height;
+  }
+
+  function handleMouseMove(e) {
+    if (!isDragging && !isResizing) return;
+    
+    e.preventDefault();
+    
+    if (isDragging && selectedRoom) {
+      const deltaX = e.clientX - dragStart.x;
+      const deltaY = e.clientY - dragStart.y;
+      
+      let newX = initialPosition.x + deltaX;
+      let newY = initialPosition.y + deltaY;
+      
+      // Snap to grid
+      if (snapToGrid) {
+        newX = Math.round(newX / 20) * 20;
+        newY = Math.round(newY / 20) * 20;
+      }
+      
+      // Keep within bounds
+      newX = Math.max(0, Math.min(newX, floorPlan.clientWidth - selectedRoom.offsetWidth));
+      newY = Math.max(0, Math.min(newY, floorPlan.clientHeight - selectedRoom.offsetHeight));
+      
+      selectedRoom.style.left = newX + 'px';
+      selectedRoom.style.top = newY + 'px';
+      
+      updateCoordinateDisplay(selectedRoom, newX, newY);
+      updateRoomInputs(selectedRoom);
+    }
+    
+    if (isResizing && selectedRoom) {
+      const deltaX = e.clientX - dragStart.x;
+      const deltaY = e.clientY - dragStart.y;
+      
+      let newWidth = initialSize.width + deltaX;
+      let newHeight = initialSize.height + deltaY;
+      
+      // Snap to grid
+      if (snapToGrid) {
+        newWidth = Math.round(newWidth / 20) * 20;
+        newHeight = Math.round(newHeight / 20) * 20;
+      }
+      
+      // Minimum sizes
+      newWidth = Math.max(80, newWidth);
+      newHeight = Math.max(60, newHeight);
+      
+      selectedRoom.style.width = newWidth + 'px';
+      selectedRoom.style.height = newHeight + 'px';
+      
+      updateSizeDisplay(selectedRoom, newWidth, newHeight);
+      updateRoomInputs(selectedRoom);
+    }
+  }
+
+  function handleMouseUp(e) {
+    if (selectedRoom) {
+      selectedRoom.classList.remove('dragging');
+    }
+    isDragging = false;
+    isResizing = false;
+  }
+
+  function selectRoom(room) {
+    // Remove selection from all rooms
+    document.querySelectorAll('.editable-room').forEach(r => r.classList.remove('selected'));
+    
+    // Select the clicked room
+    room.classList.add('selected');
+    selectedRoom = room;
+    
+    // Show room info panel
+    const infoPanel = document.getElementById('selected-room-info');
+    infoPanel.style.display = 'block';
+    
+    // Update room title
+    const roomNumber = room.dataset.roomNumber;
+    document.getElementById('selected-room-title').textContent = `Room ${roomNumber}`;
+    
+    // Update input values
+    updateRoomInputs(room);
+  }
+
+  function updateRoomInputs(room) {
+    const rect = room.getBoundingClientRect();
+    const floorPlanRect = floorPlan.getBoundingClientRect();
+    
+    const x = Math.round(rect.left - floorPlanRect.left);
+    const y = Math.round(rect.top - floorPlanRect.top);
+    const width = Math.round(rect.width);
+    const height = Math.round(rect.height);
+    
+    document.getElementById('room-x').value = x;
+    document.getElementById('room-y').value = y;
+    document.getElementById('room-width').value = width;
+    document.getElementById('room-height').value = height;
+  }
+
+  function updateSelectedRoomFromInputs() {
+    if (!selectedRoom) return;
+    
+    const x = parseInt(document.getElementById('room-x').value) || 0;
+    const y = parseInt(document.getElementById('room-y').value) || 0;
+    const width = parseInt(document.getElementById('room-width').value) || 80;
+    const height = parseInt(document.getElementById('room-height').value) || 60;
+    
+    // Don't auto-apply, just show preview
+    // User needs to click "Apply Changes"
+  }
+
+  function applyChangesToRoom() {
+    if (!selectedRoom) return;
+    
+    const x = parseInt(document.getElementById('room-x').value) || 0;
+    const y = parseInt(document.getElementById('room-y').value) || 0;
+    const width = parseInt(document.getElementById('room-width').value) || 80;
+    const height = parseInt(document.getElementById('room-height').value) || 60;
+    
+    selectedRoom.style.left = x + 'px';
+    selectedRoom.style.top = y + 'px';
+    selectedRoom.style.width = width + 'px';
+    selectedRoom.style.height = height + 'px';
+    
+    updateCoordinateDisplay(selectedRoom, x, y);
+    updateSizeDisplay(selectedRoom, width, height);
+  }
+
+  function centerSelectedRoom() {
+    if (!selectedRoom) return;
+    
+    const centerX = (floorPlan.clientWidth - selectedRoom.offsetWidth) / 2;
+    const centerY = (floorPlan.clientHeight - selectedRoom.offsetHeight) / 2;
+    
+    selectedRoom.style.left = centerX + 'px';
+    selectedRoom.style.top = centerY + 'px';
+    
+    updateCoordinateDisplay(selectedRoom, centerX, centerY);
+    updateRoomInputs(selectedRoom);
+  }
+
+  function resetAllPositions() {
+    if (!confirm('Reset all rooms to their default positions?')) return;
+    
+    document.querySelectorAll('.editable-room').forEach((room, index) => {
+      const x = 50 + (index % 4) * 200;
+      const y = 50 + Math.floor(index / 4) * 150;
+      
+      room.style.left = x + 'px';
+      room.style.top = y + 'px';
+      room.style.width = '160px';
+      room.style.height = '120px';
+      
+      updateCoordinateDisplay(room, x, y);
+      updateSizeDisplay(room, 160, 120);
+    });
+    
+    if (selectedRoom) {
+      updateRoomInputs(selectedRoom);
+    }
+  }
+
+  function autoArrangeRooms() {
+    const rooms = Array.from(document.querySelectorAll('.editable-room'));
+    const cols = Math.ceil(Math.sqrt(rooms.length));
+    const roomWidth = 160;
+    const roomHeight = 120;
+    const spacing = 20;
+    
+    rooms.forEach((room, index) => {
+      const col = index % cols;
+      const row = Math.floor(index / cols);
+      
+      const x = 50 + col * (roomWidth + spacing);
+      const y = 50 + row * (roomHeight + spacing);
+      
+      room.style.left = x + 'px';
+      room.style.top = y + 'px';
+      room.style.width = roomWidth + 'px';
+      room.style.height = roomHeight + 'px';
+      
+      updateCoordinateDisplay(room, x, y);
+      updateSizeDisplay(room, roomWidth, roomHeight);
+    });
+    
+    if (selectedRoom) {
+      updateRoomInputs(selectedRoom);
+    }
+  }
+
+  function updateCoordinateDisplay(room, x, y) {
+    const xCoord = room.querySelector('.x-coord');
+    const yCoord = room.querySelector('.y-coord');
+    if (xCoord) xCoord.textContent = Math.round(x);
+    if (yCoord) yCoord.textContent = Math.round(y);
+  }
+
+  function updateSizeDisplay(room, width, height) {
+    const widthCoord = room.querySelector('.width-coord');
+    const heightCoord = room.querySelector('.height-coord');
+    if (widthCoord) widthCoord.textContent = Math.round(width);
+    if (heightCoord) heightCoord.textContent = Math.round(height);
+  }
+
+  function updateFormInputs() {
+    const container = document.getElementById('room-inputs');
+    container.innerHTML = '';
+    
+    document.querySelectorAll('.editable-room').forEach(room => {
+      const roomId = room.dataset.roomId;
+      const rect = room.getBoundingClientRect();
+      const floorPlanRect = floorPlan.getBoundingClientRect();
+      
+      const x = Math.round(rect.left - floorPlanRect.left);
+      const y = Math.round(rect.top - floorPlanRect.top);
+      const width = Math.round(rect.width);
+      const height = Math.round(rect.height);
+      
+      // Create hidden inputs for each room
+      ['x_position', 'y_position', 'width', 'height'].forEach(attr => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = `rooms[${roomId}][${attr}]`;
+        
+        switch(attr) {
+          case 'x_position': input.value = x; break;
+          case 'y_position': input.value = y; break;
+          case 'width': input.value = width; break;
+          case 'height': input.value = height; break;
+        }
+        
+        container.appendChild(input);
+      });
+    });
+  }
+
+  // Initialize grid snapping
+  if (snapToGrid) {
+    floorPlan.classList.add('snap-grid');
+  }
+});
+</script>

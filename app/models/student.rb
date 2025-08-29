@@ -6,7 +6,34 @@ class Student < ApplicationRecord
     has_many :events,        through: :student_event_options
     has_many :event_options, through: :student_event_options
     
-    has_one_attached :photo
+    has_one_attached :photo do |attachable|
+      attachable.variant :thumbnail, resize_to_limit: [100, 100]
+      attachable.variant :small, resize_to_limit: [40, 40]
+      attachable.variant :headshot, resize_to_limit: [300, 400]
+    end
+    
+    # Photo processing has been disabled
+    # def photo=(attachable)
+    #   super(attachable)
+    #   # Schedule background job to process the photo after it's attached
+    #   ProcessPhotoJob.perform_later(self) if attachable.present?
+    # end
+    
+    # Define image variants for better performance
+    def photo_thumbnail
+      return nil unless photo.attached?
+      photo.variant(:thumbnail)
+    end
+    
+    def photo_small
+      return nil unless photo.attached?
+      photo.variant(:small)
+    end
+    
+    def photo_headshot
+      return nil unless photo.attached?
+      photo.variant(:headshot)
+    end
 
     validates :short_name, presence: true, uniqueness: true
 

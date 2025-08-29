@@ -1,0 +1,67 @@
+<% content_for :title, "Bulk Upload Student Photos" %>
+
+<div class="max-w-4xl mx-auto p-6">
+  <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-6">Bulk Upload Student Photos</h1>
+
+  <div class="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg p-4 mb-6">
+    <h2 class="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-2">How to use bulk upload:</h2>
+    <ul class="list-disc list-inside text-blue-700 dark:text-blue-300 space-y-1">
+      <li>Name your photo files with the student's <strong>short_name</strong> (e.g., "john_doe.jpg", "jane-smith.png")</li>
+      <li>Alternative: Use first name, last name, or full name (e.g., "John.jpg", "Jane Smith.png")</li>
+      <li>Supported formats: JPG, PNG, GIF, WebP</li>
+      <li>The system will try to match filenames to students automatically</li>
+      <li>You can upload multiple photos at once</li>
+    </ul>
+  </div>
+
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+    <%= form_with url: process_bulk_upload_students_path, method: :post, multipart: true, local: true, class: "space-y-6" do |form| %>
+      
+      <div>
+        <label for="photos" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          Select Student Photos
+        </label>
+        <%= form.file_field :photos, 
+            multiple: true, 
+            accept: "image/*", 
+            class: "block w-full text-sm text-gray-500 dark:text-gray-400
+                   file:mr-4 file:py-2 file:px-4
+                   file:rounded-lg file:border-0
+                   file:text-sm file:font-semibold
+                   file:bg-blue-50 file:text-blue-700
+                   hover:file:bg-blue-100
+                   dark:file:bg-blue-900 dark:file:text-blue-300
+                   border border-gray-300 dark:border-gray-600 rounded-lg
+                   cursor-pointer bg-gray-50 dark:bg-gray-700" %>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+          Hold Ctrl/Cmd to select multiple files
+        </p>
+      </div>
+
+      <div class="flex space-x-4">
+        <%= form.submit "Upload Photos", 
+            class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200" %>
+        <%= link_to "Cancel", students_path, 
+            class: "bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg transition duration-200" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-8 bg-yellow-50 dark:bg-yellow-900 border border-yellow-200 dark:border-yellow-700 rounded-lg p-4">
+    <h3 class="text-lg font-semibold text-yellow-800 dark:text-yellow-200 mb-2">Tips for best results:</h3>
+    <ul class="list-disc list-inside text-yellow-700 dark:text-yellow-300 space-y-1">
+      <li>Use consistent naming: if one file is "john_doe.jpg", use underscores for all</li>
+      <li>Check your student list first to know exact short_names</li>
+      <li>Photos will be automatically cropped to headshot format (3:4 ratio, portrait)</li>
+      <li>Images are resized and optimized for faster loading</li>
+      <li>If a student already has a photo, it will be replaced</li>
+      <li>Failed uploads will be reported with reasons</li>
+    </ul>
+  </div>
+
+  <div class="mt-6">
+    <%= link_to "View All Students", students_path, 
+        class: "inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200" %>
+    <span class="ml-2">→</span>
+  </div>
+</div>

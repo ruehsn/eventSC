@@ -1,6 +1,18 @@
 <p style="color: green"><%= notice %></p>
 
 <h1>Student Details</h1>
+
+<!-- Student Photo -->
+<div class="mb-6">
+  <% if @student.photo.attached? %>
+    <%= image_tag @student.photo_thumbnail, class: "w-32 h-32 rounded-full object-cover border-4 border-gray-300 shadow-lg" %>
+  <% else %>
+    <div class="w-32 h-32 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-4xl font-bold text-gray-600 dark:text-gray-300 border-4 border-gray-300 shadow-lg">
+      <%= @student.first_name&.first&.upcase || '?' %>
+    </div>
+  <% end %>
+</div>
+
 <table border="1" style="border-collapse: collapse; width: 100%;">
   <tr>
     <th>Short Name</th>

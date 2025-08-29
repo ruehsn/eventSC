@@ -1,6 +1,11 @@
 Rails.application.routes.draw do
   # Rooming assignments
-  resources :rooming_assignments, only: [:index, :show, :edit, :update], path: 'rooming-assignments'
+  resources :rooming_assignments, only: [:index, :show, :edit, :update], path: 'rooming-assignments' do
+    member do
+      get :edit_floor_plan
+      patch :update_floor_plan
+    end
+  end
   
   # Room management
   resources :living_areas do
@@ -11,6 +16,10 @@ Rails.application.routes.draw do
   get "survey", to: "survey#index"
   post "survey/submit", to: "survey#submit"
   resources :students do
+    collection do
+      get :bulk_upload
+      post :process_bulk_upload
+    end
     member do
       get "event_signup"
       post "submit_event_options"

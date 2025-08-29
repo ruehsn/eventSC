@@ -1,12 +1,171 @@
-<<% content_for :title, "Rooming Assignments" %>
+<% content_for :title, "Rooming Assignments" %>
+
+<style>
+  /* Improve button readability */
+  .btn-outline {
+    background-color: #ffffff !important;
+    color: #374151 !important;
+    border-color: #d1d5db !important;
+  }
+  .btn-outline:hover {
+    background-color: #f9fafb !important;
+    color: #111827 !important;
+    border-color: #9ca3af !important;
+  }
+  .dark .btn-outline {
+    background-color: #1f2937 !important;
+    color: #e5e7eb !important;
+    border-color: #4b5563 !important;
+  }
+  .dark .btn-outline:hover {
+    background-color: #374151 !important;
+    color: #f9fafb !important;
+    border-color: #6b7280 !important;
+  }
+</style>
 
 <div class="flex flex-col space-y-6">
   <div class="flex justify-between items-center">
     <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Rooming Assignments</h1>
-    <%= link_to "Manage Rooms", living_areas_path, class: "btn btn-secondary" %>
+    <div class="flex space-x-3">
+      <%= link_to "Manage Rooms", living_areas_path, class: "btn btn-secondary" %>
+      <%= link_to "Grid View", "#", class: "btn btn-outline", onclick: "toggleView('grid')" %>
+      <%= link_to "Table View", "#", class: "btn btn-primary", onclick: "toggleView('table')" %>
+    </div>
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+  <!-- Summary Statistics -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+    <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Overall Summary</h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="text-center">
+        <div class="text-2xl font-bold text-blue-600"><%= @living_areas.sum(&:total_capacity) %></div>
+        <div class="text-sm text-gray-600 dark:text-gray-400">Total Capacity</div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold text-green-600"><%= @living_areas.sum(&:occupied_spaces) %></div>
+        <div class="text-sm text-gray-600 dark:text-gray-400">Total Occupied</div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold text-orange-600"><%= @living_areas.sum(&:available_spaces) %></div>
+        <div class="text-sm text-gray-600 dark:text-gray-400">Total Available</div>
+      </div>
+      <div class="text-center">
+        <div class="text-2xl font-bold text-purple-600"><%= @living_areas.count %></div>
+        <div class="text-sm text-gray-600 dark:text-gray-400">Buildings</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detailed Table View -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Room Assignment Details</h2>
+    </div>
+    
+    <div class="overflow-x-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <% building_groups = @living_areas.each_slice((@living_areas.count / 2.0).ceil).to_a %>
+        <% building_groups.each do |buildings| %>
+          <div class="space-y-6">
+            <% buildings.each do |living_area| %>
+              <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+                <!-- Building Header -->
+                <div class="bg-lime-400 dark:bg-lime-500 border-b border-gray-200 dark:border-gray-700">
+                  <div class="flex justify-between items-center px-4 py-3">
+                    <div class="flex-1"></div>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-900 flex-1 text-center">
+                      <%= living_area.name %>
+                    </h3>
+                    <div class="flex-1 flex justify-end space-x-3">
+                      <%= link_to "View", rooming_assignment_path(living_area), 
+                          class: "text-gray-700 hover:text-gray-900 dark:text-gray-800 dark:hover:text-gray-900 text-sm underline" %>
+                      <%= link_to "Edit", edit_rooming_assignment_path(living_area), 
+                          class: "text-gray-700 hover:text-gray-900 dark:text-gray-800 dark:hover:text-gray-900 text-sm underline" %>
+                    </div>
+                  </div>
+                </div>
+                
+                <% if living_area.rooms.any? %>
+                  <% sorted_rooms = living_area.rooms.includes(:students).sort_by do |room|
+                       # Extract numeric part for sorting, fallback to string comparison
+                       numeric_part = room.room_number.scan(/\d+/).first&.to_i || 0
+                       alpha_part = room.room_number.gsub(/\d+/, '')
+                       [alpha_part, numeric_part]
+                     end %>
+                  
+                  <div class="p-2">
+                    <% 
+                      # Split rooms into two columns, filling vertically first
+                      total_rooms = sorted_rooms.count
+                      rooms_per_column = (total_rooms / 2.0).ceil
+                      left_column = sorted_rooms[0...rooms_per_column]
+                      right_column = sorted_rooms[rooms_per_column..-1] || []
+                      max_rows = [left_column.count, right_column.count].max
+                    %>
+                    
+                    <% (0...max_rows).each do |row_index| %>
+                      <div class="flex gap-2 mb-2">
+                        <% [left_column[row_index], right_column[row_index]].compact.each do |room| %>
+                          <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-2 border border-gray-200 dark:border-gray-700 flex-1">
+                            <div class="text-center mb-1">
+                              <div class="flex items-center justify-center gap-2 font-medium text-gray-900 dark:text-white text-sm">
+                                <span>Room <%= room.room_number %></span>
+                                <span class="text-xs <%= room.available_spaces > 0 ? 'text-orange-600 font-medium' : 'text-gray-400' %>">
+                                  (<%= room.available_spaces %>/<%= room.capacity %>)
+                                </span>
+                              </div>
+                            </div>
+                            
+                            <div class="mt-1">
+                              <% if room.students.any? %>
+                                <div class="space-y-1">
+                                  <% room.students.each do |student| %>
+                                    <div class="flex items-center space-x-1">
+                                      <% if student.photo.attached? %>
+                                        <%= image_tag student.photo_small, alt: student.display_name, 
+                                             class: "w-4 h-4 rounded-full object-cover" %>
+                                      <% else %>
+                                        <div class="w-4 h-4 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-300">
+                                          <%= student.first_name&.first&.upcase || '?' %>
+                                        </div>
+                                      <% end %>
+                                      <span class="text-xs text-gray-700 dark:text-gray-300"><%= student.display_name %></span>
+                                    </div>
+                                  <% end %>
+                                </div>
+                              <% else %>
+                                <span class="text-gray-400 italic text-xs">No students assigned</span>
+                              <% end %>
+                            </div>
+                          </div>
+                        <% end %>
+                        
+                        <!-- Add empty space if only one room in this row -->
+                        <% if row_index < left_column.count && (right_column.empty? || row_index >= right_column.count) %>
+                          <div class="flex-1"></div>
+                        <% end %>
+                      </div>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <div class="p-4 text-center text-gray-400 italic">
+                    No rooms defined for this building
+                    <%= link_to "Manage Rooms", living_area_path(living_area), 
+                        class: "text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 ml-2" %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Legacy Grid View (Hidden by default) -->
+  <div id="grid-view" class="hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
     <% @living_areas.each do |living_area| %>
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
         <h2 class="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
@@ -28,21 +187,47 @@
           </div>
         </div>
 
-        <div class="flex space-x-2">
-          <%= link_to "View Floor Plan", rooming_assignment_path(living_area), 
-              class: "btn btn-primary flex-1 text-center" %>
-          <%= link_to "Edit Assignments", edit_rooming_assignment_path(living_area), 
-              class: "btn btn-secondary flex-1 text-center" %>
-        </div>
-        
-        <div class="mt-4">
-          <%= link_to "Manage Rooms", living_area_rooms_path(living_area), 
-              class: "text-sm text-blue-600 hover:text-blue-800" %>
+        <div class="mt-2 flex flex-col space-y-2">
+          <div class="flex space-x-2">
+            <%= link_to "View Floor Plan", rooming_assignment_path(living_area), 
+                class: "btn btn-primary flex-1 text-center" %>
+            <%= link_to "Edit Assignments", edit_rooming_assignment_path(living_area), 
+                class: "btn btn-secondary flex-1 text-center" %>
+          </div>
+          <div class="flex space-x-2">
+            <%= link_to "Edit Floor Plan", edit_floor_plan_rooming_assignment_path(living_area), 
+                class: "btn btn-outline flex-1 text-center text-sm" %>
+            <%= link_to "Manage Rooms", living_area_rooms_path(living_area), 
+                class: "btn btn-outline flex-1 text-center text-sm" %>
+          </div>
         </div>
       </div>
     <% end %>
+    </div>
   </div>
-</div>v>
-  <h1 class="font-bold text-4xl">RoomingAssignments#index</h1>
-  <p>Find me in app/views/rooming_assignments/index.html.erb</p>
 </div>
+
+<script>
+function toggleView(viewType) {
+  const tableView = document.querySelector('.bg-white.dark\\:bg-gray-800.rounded-lg.shadow-md.overflow-hidden');
+  const gridView = document.getElementById('grid-view');
+  const tableBtn = document.querySelector('a[onclick="toggleView(\'table\')"]');
+  const gridBtn = document.querySelector('a[onclick="toggleView(\'grid\')"]');
+  
+  if (viewType === 'table') {
+    tableView.classList.remove('hidden');
+    gridView.classList.add('hidden');
+    tableBtn.classList.remove('btn-outline');
+    tableBtn.classList.add('btn-primary');
+    gridBtn.classList.remove('btn-primary');
+    gridBtn.classList.add('btn-outline');
+  } else {
+    tableView.classList.add('hidden');
+    gridView.classList.remove('hidden');
+    gridBtn.classList.remove('btn-outline');
+    gridBtn.classList.add('btn-primary');
+    tableBtn.classList.remove('btn-primary');
+    tableBtn.classList.add('btn-outline');
+  }
+}
+</script>

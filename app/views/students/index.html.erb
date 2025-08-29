@@ -1,9 +1,20 @@
 <p class="text-green-500 "><%= notice %></p>
 
 <% content_for :title, "Students" %>
+
+<% if admin_user? %>
+  <div class="mb-4 flex space-x-4">
+    <%= link_to "Add New Student", new_student_path, 
+        class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200" %>
+    <%= link_to "Bulk Upload Photos", bulk_upload_students_path, 
+        class: "bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200" %>
+  </div>
+<% end %>
+
 <table class="table" >
   <thead>
     <tr>
+      <th>Photo</th>
       <th>Short Name</th>
       <th>Living Area</th>
       <th>Advisor</th>
@@ -21,6 +32,15 @@
   <tbody>
     <% @students.each do |student| %>
       <tr class="odd:bg-gray-200 dark:odd:bg-gray-800">
+        <td>
+          <% if student.photo.attached? %>
+            <%= image_tag student.photo_thumbnail, class: "w-10 h-10 rounded-full object-cover border border-gray-300" %>
+          <% else %>
+            <div class="w-10 h-10 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-sm font-medium text-gray-600 dark:text-gray-300">
+              <%= student.first_name&.first&.upcase || '?' %>
+            </div>
+          <% end %>
+        </td>
         <td><%= student.short_name %></td>
         <td><%= student.living_area.name %></td>
         <td><%= student.advisor.first_name %> <%= student.advisor.last_name %></td>

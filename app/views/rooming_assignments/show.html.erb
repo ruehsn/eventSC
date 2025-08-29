@@ -1,7 +1,29 @@
-<<% content_for :title, "#{@living_area.name} - Floor Plan" %>
+<% content_for :title, "#{@living_area.name} - Floor Plan" %>
 
 <!-- Floor Plan CSS -->
 <style>
+  /* Improve button readability */
+  .btn-outline {
+    background-color: #ffffff !important;
+    color: #374151 !important;
+    border-color: #d1d5db !important;
+  }
+  .btn-outline:hover {
+    background-color: #f9fafb !important;
+    color: #111827 !important;
+    border-color: #9ca3af !important;
+  }
+  .dark .btn-outline {
+    background-color: #1f2937 !important;
+    color: #e5e7eb !important;
+    border-color: #4b5563 !important;
+  }
+  .dark .btn-outline:hover {
+    background-color: #374151 !important;
+    color: #f9fafb !important;
+    border-color: #6b7280 !important;
+  }
+
   .floor-plan {
     position: relative;
     background: #f8f9fa;
@@ -161,13 +183,13 @@
              style="left: <%= room.x_position %>px; top: <%= room.y_position %>px; width: <%= room.width %>px; height: <%= room.height %>px;">
           
           <div class="room-header">
-            Room <%= room.room_number %>
+            Room <%= room.room_number %> (<%= room.students.count %>/<%= room.capacity %>)
           </div>
           
           <div class="room-students">
             <% room.students.each do |student| %>
               <% if student.photo.attached? %>
-                <%= image_tag student.photo, class: "student-photo", 
+                <%= image_tag student.photo_small, class: "student-photo", 
                     title: "#{student.display_name} (#{student.short_name})" %>
               <% else %>
                 <div class="student-placeholder" title="<%= student.display_name %> (<%= student.short_name %>)">
@@ -180,10 +202,6 @@
             <% room.available_spaces.times do %>
               <div class="student-placeholder">+</div>
             <% end %>
-          </div>
-          
-          <div class="capacity-indicator">
-            <%= room.students.count %>/<%= room.capacity %>
           </div>
         </div>
       <% end %>
@@ -214,7 +232,7 @@
         <% @students_without_rooms.each do |student| %>
           <div class="student-card">
             <% if student.photo.attached? %>
-              <%= image_tag student.photo, alt: student.display_name %>
+              <%= image_tag student.photo_small, alt: student.display_name %>
             <% else %>
               <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center mr-2">
                 <%= student.first_name&.first || '?' %>

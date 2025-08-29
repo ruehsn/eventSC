@@ -1,6 +1,6 @@
 class StudentsController < ApplicationController
   before_action :set_student, only: %i[ show edit update destroy event_signup submit_event_options send_parent_email_now ]
-  before_action :require_admin, only: %i[ new create edit update destroy send_parent_email_now ]
+  before_action :require_admin, only: %i[ new create edit update destroy send_parent_email_now bulk_upload process_bulk_upload ]
 
   # GET /students or /students.json
   def index
@@ -107,6 +107,49 @@ class StudentsController < ApplicationController
     end
   end
 
+  # GET /students/bulk_upload
+  def bulk_upload
+    # Show the bulk upload form
+  end
+
+  # POST /students/process_bulk_upload  
+  def process_bulk_upload
+    unless params[:photos].present?
+      redirect_to bulk_upload_students_path, alert: "Please select photos to upload."
+      return
+    end
+
+    results = { success: [], failed: [] }
+    
+    # Filter out empty strings and non-file objects
+    valid_photos = params[:photos].select { |photo| photo.present? && photo.respond_to?(:original_filename) }
+    
+    valid_photos.each do |photo|
+      # Extract student identifier from filename (before the file extension)
+      filename = File.basename(photo.original_filename, File.extname(photo.original_filename))
+      
+      # Try to find student by short_name, first_name, or last_name
+      student = find_student_by_identifier(filename)
+      
+      if student
+        begin
+          # Attach the photo (this will trigger automatic processing via the model callback)
+          student.photo.attach(photo)
+          results[:success] << { student: student.display_name, filename: photo.original_filename }
+        rescue => e
+          results[:failed] << { filename: photo.original_filename, error: e.message }
+        end
+      else
+        results[:failed] << { filename: photo.original_filename, error: "Student not found" }
+      end
+    end
+
+    flash[:notice] = "Uploaded #{results[:success].count} photos successfully."
+    flash[:alert] = "Failed to upload #{results[:failed].count} photos." if results[:failed].any?
+    
+    redirect_to bulk_upload_students_path, notice: "Bulk upload completed. #{results[:success].count} successful, #{results[:failed].count} failed."
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_student
@@ -115,12 +158,27 @@ class StudentsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def student_params
-      params.require(:student).permit(:short_name, :first_name, :last_name, :notes_url, :living_area_id, :advisor_id, :year, :gender, :major, :parent_email, :photo)
+      params.require(:student).permit(:short_name, :first_name, :last_name, :notes_url, :living_area_id, :advisor_id, :year, :gender, :major, :parent_email, :photo, :student_life_holds_cash)
     end
 
     def require_admin
       unless Current.user&.admin?
         redirect_to students_path, alert: "Admin access required."
       end
+    end
+
+    def find_student_by_identifier(identifier)
+      # Clean the identifier (remove common separators and normalize)
+      clean_id = identifier.gsub(/[-_\s]+/, ' ').strip.downcase
+      
+      # Try exact match on short_name first
+      student = Student.find_by("LOWER(short_name) = ?", clean_id)
+      return student if student
+
+      # Try partial matches
+      Student.where(
+        "LOWER(short_name) LIKE ? OR LOWER(first_name) LIKE ? OR LOWER(last_name) LIKE ? OR LOWER(CONCAT(first_name, ' ', last_name)) LIKE ?",
+        "%#{clean_id}%", "%#{clean_id}%", "%#{clean_id}%", "%#{clean_id}%"
+      ).first
     end
 end

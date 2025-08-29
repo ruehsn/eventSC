@@ -28,10 +28,11 @@
   <div>
     <%= form.label :photo, "Student Photo" %>
     <%= form.file_field :photo, class: "input", accept: "image/*" %>
+    <p class="text-sm text-gray-500 mt-1">Upload a photo (JPG, PNG, or other image formats)</p>
     <% if @student.photo.attached? %>
       <div class="mt-2">
         <p class="text-sm text-gray-600">Current photo:</p>
-        <%= image_tag @student.photo, class: "w-20 h-20 rounded-full object-cover border-2 border-gray-300" %>
+        <%= image_tag @student.photo_thumbnail, class: "w-24 h-24 rounded-full object-cover border-2 border-gray-300" %>
       </div>
     <% end %>
   </div>

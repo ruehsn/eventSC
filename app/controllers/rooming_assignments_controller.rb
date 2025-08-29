@@ -1,9 +1,9 @@
 class RoomingAssignmentsController < ApplicationController
   before_action :require_admin
-  before_action :set_living_area, only: [:show, :edit, :update]
+  before_action :set_living_area, only: [:show, :edit, :update, :edit_floor_plan, :update_floor_plan]
 
   def index
-    @living_areas = LivingArea.includes(:rooms, :students).all
+    @living_areas = LivingArea.includes(rooms: :students).all
   end
 
   def show
@@ -40,6 +40,30 @@ class RoomingAssignmentsController < ApplicationController
     redirect_to rooming_assignment_path(@living_area), notice: 'Room assignments updated successfully.'
   rescue ActiveRecord::RecordInvalid => e
     redirect_to edit_rooming_assignment_path(@living_area), alert: "Error updating assignments: #{e.message}"
+  end
+
+  def edit_floor_plan
+    @rooms = @living_area.rooms.order(:room_number)
+  end
+
+  def update_floor_plan
+    room_updates = params[:rooms] || {}
+    
+    ActiveRecord::Base.transaction do
+      room_updates.each do |room_id, attributes|
+        room = Room.find(room_id)
+        room.update!(
+          x_position: attributes[:x_position].to_i,
+          y_position: attributes[:y_position].to_i,
+          width: attributes[:width].to_i,
+          height: attributes[:height].to_i
+        )
+      end
+    end
+    
+    redirect_to edit_floor_plan_rooming_assignment_path(@living_area), notice: 'Floor plan updated successfully.'
+  rescue ActiveRecord::RecordInvalid => e
+    redirect_to edit_floor_plan_rooming_assignment_path(@living_area), alert: "Error updating floor plan: #{e.message}"
   end
 
   private
