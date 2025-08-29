@@ -1,0 +1,19 @@
+#!/bin/bash
+set -e
+
+echo "Starting Fly.io deployment..."
+
+# Change to the Rails directory
+cd /rails
+
+# Update bundle dependencies
+echo "installing bundle dependencies..."
+bundle install
+
+# Run database migrations if needed
+echo "Running database migrations..."
+./bin/rails db:migrate
+
+# Start the Rails server
+echo "Starting Rails server..."
+exec ./bin/rails server

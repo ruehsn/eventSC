@@ -50,3 +50,8 @@ console_command = '/rails/bin/rails console'
   memory = '512mb'
   cpu_kind = 'shared'
   cpus = 1
+
+[[restart]]
+  policy = "on-failure"
+  retries = 2
+  processes = ["app"]
