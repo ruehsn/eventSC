@@ -1,5 +1,7 @@
 Next Actions
 ======================================
+✓ COMPLETED: Fixed SECRET_KEY_BASE security warning - moved from fly.toml to Fly.io secrets (08/28/2025)
+
 Hide Student Edit/Delete actions Actions
 Spruce up Student Detail View
   -format table

@@ -14,7 +14,6 @@ console_command = '/rails/bin/rails console'
   DATABASE_URL = 'sqlite3:///data/staging.sqlite3'
   PORT = '8080'
   RAILS_ENV = 'staging'
-  SECRET_KEY_BASE = '4e23dbe86cd0bfb61df63ee7814f68cfce4d09e5eb1450fb1b966b946fcbadbcb4059e3e3d1e08a1e0bd24079f711c3b3f999be851d859174aad83140df567b1'
 
 [processes]
   app = './bin/rails server'
@@ -50,8 +49,3 @@ console_command = '/rails/bin/rails console'
   memory = '512mb'
   cpu_kind = 'shared'
   cpus = 1
-
-[[restart]]
-  policy = "on-failure"
-  retries = 2
-  processes = ["app"]

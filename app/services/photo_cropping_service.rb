@@ -210,3 +210,4 @@ class PhotoCroppingService
       image.crop(0, crop_y, width, new_height)
     end
   end
+end
