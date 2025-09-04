@@ -4,6 +4,8 @@ def time_obj(hour, min)
   Time.parse("#{hour}:#{min}")
 end
 
+today = Date.today + ((5 - Date.today.wday) % 7)
+
 # Morning events (typically 9am-12pm)
 e = Event.find_or_create_by!(name: "Morning", date: today - 14)
 EventOption.find_or_create_by!(
@@ -33,7 +35,7 @@ EventOption.find_or_create_by!(event_id: e.id, description: "No, thanks", cost: 
 EventOption.find_or_create_by!(event_id: e.id, description: "Off Campus", cost: 0, office_holds_cash: true, transportation_required: false, leave_time: nil, return_time: nil)
 
 # Haircut events (typically scheduled during the day)
-e = Event.find_or_create_by!(name: "Haircut", date: today -6)
+e = Event.find_or_create_by!(name: "Haircut", date: today - 6)
 EventOption.find_or_create_by!(event_id: e.id, description: "Yes", cost: 12, office_holds_cash: true, transportation_required: false, leave_time: "14:00", return_time: "15:00")
 EventOption.find_or_create_by!(event_id: e.id, description: "No, thanks", cost: 0, office_holds_cash: true, transportation_required: false, leave_time: nil, return_time: nil)
 
@@ -90,7 +92,7 @@ EventOption.find_or_create_by!(event_id: e.id, description: "No, thanks", cost: 
 EventOption.find_or_create_by!(event_id: e.id, description: "Off Campus", cost: 0, office_holds_cash: true, transportation_required: false, leave_time: nil, return_time: nil)
 
 # Morning events with proper time objects
-e = Event.find_or_create_by!(name: "Morning", date: today +8)
+e = Event.find_or_create_by!(name: "Morning", date: today + 8)
 EventOption.find_or_create_by!(
   event_id: e.id,
   description: "Discovery World Museum & Aquarium",

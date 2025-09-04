@@ -106,11 +106,47 @@ GEM
       rails (>= 3.0.0)
     dotenv (3.1.8)
     drb (2.2.3)
+    dry-configurable (1.3.0)
+      dry-core (~> 1.1)
+      zeitwerk (~> 2.6)
+    dry-core (1.1.0)
+      concurrent-ruby (~> 1.0)
+      logger
+      zeitwerk (~> 2.6)
+    dry-inflector (1.2.0)
+    dry-initializer (3.2.0)
+    dry-logic (1.6.0)
+      bigdecimal
+      concurrent-ruby (~> 1.0)
+      dry-core (~> 1.1)
+      zeitwerk (~> 2.6)
+    dry-schema (1.14.1)
+      concurrent-ruby (~> 1.0)
+      dry-configurable (~> 1.0, >= 1.0.1)
+      dry-core (~> 1.1)
+      dry-initializer (~> 3.2)
+      dry-logic (~> 1.5)
+      dry-types (~> 1.8)
+      zeitwerk (~> 2.6)
+    dry-types (1.8.3)
+      bigdecimal (~> 3.0)
+      concurrent-ruby (~> 1.0)
+      dry-core (~> 1.0)
+      dry-inflector (~> 1.0)
+      dry-logic (~> 1.4)
+      zeitwerk (~> 2.6)
     ed25519 (1.4.0)
     erb (5.0.2)
     erubi (1.13.1)
     et-orbi (1.3.0)
       tzinfo
+    fast-mcp (1.5.0)
+      addressable (~> 2.8)
+      base64
+      dry-schema (~> 1.14)
+      json (~> 2.0)
+      mime-types (~> 3.4)
+      rack (~> 3.1)
     ffi (1.17.2-aarch64-linux-gnu)
     ffi (1.17.2-aarch64-linux-musl)
     ffi (1.17.2-arm-linux-gnu)
@@ -169,6 +205,10 @@ GEM
       net-smtp
     marcel (1.0.4)
     matrix (0.4.3)
+    mime-types (3.7.0)
+      logger
+      mime-types-data (~> 3.2025, >= 3.2025.0507)
+    mime-types-data (3.2025.0826)
     mini_magick (5.3.1)
       logger
     mini_mime (1.1.5)
@@ -366,6 +406,10 @@ GEM
     thruster (0.1.15)
     thruster (0.1.15-aarch64-linux)
     thruster (0.1.15-x86_64-linux)
+    tidewave (0.2.0)
+      fast-mcp (~> 1.5.0)
+      rack (>= 2.0)
+      rails (>= 7.1.0)
     timeout (0.4.3)
     toml (0.3.0)
       parslet (>= 1.8.0, < 3.0.0)
@@ -429,6 +473,7 @@ DEPENDENCIES
   tailwindcss-rails (~> 4.2)
   tailwindcss-ruby (~> 4.1)
   thruster
+  tidewave
   turbo-rails
   tzinfo-data
   web-console

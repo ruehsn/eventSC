@@ -18,7 +18,7 @@ class LivingAreasControllerTest < ActionDispatch::IntegrationTest
 
   test "should create living_area" do
     assert_difference("LivingArea.count") do
-      post living_areas_url, params: { living_area: { description: @living_area.description, name: @living_area.name } }
+      post living_areas_url, params: { living_area: { description: "New living area description", name: "New Living Area" } }
     end
 
     assert_redirected_to living_area_url(LivingArea.last)
@@ -35,7 +35,7 @@ class LivingAreasControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update living_area" do
-    patch living_area_url(@living_area), params: { living_area: { description: @living_area.description, name: @living_area.name } }
+    patch living_area_url(@living_area), params: { living_area: { description: "Updated description", name: "Updated Living Area" } }
     assert_redirected_to living_area_url(@living_area)
   end
 

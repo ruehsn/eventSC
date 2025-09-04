@@ -2,66 +2,66 @@
 
 <h1>Student Details</h1>
 
-<!-- Student Photo -->
-<div class="mb-6">
+<div class="flex items-start mb-6">
   <% if @student.photo.attached? %>
-    <%= image_tag @student.photo_thumbnail, class: "w-32 h-32 rounded-full object-cover border-4 border-gray-300 shadow-lg" %>
+    <%= image_tag @student.photo_thumbnail, class: "rounded-full object-cover border-4 border-gray-300 shadow-lg mr-8", style: "width: 200px; height: 200px;" %>
   <% else %>
-    <div class="w-32 h-32 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-4xl font-bold text-gray-600 dark:text-gray-300 border-4 border-gray-300 shadow-lg">
+    <div class="rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-7xl font-bold text-gray-600 dark:text-gray-300 border-4 border-gray-300 shadow-lg mr-8" style="width: 200px; height: 200px;">
       <%= @student.first_name&.first&.upcase || '?' %>
     </div>
   <% end %>
-</div>
-
-<table border="1" style="border-collapse: collapse; width: 100%;">
-  <tr>
-    <th>Short Name</th>
-    <td><%= @student.short_name %></td>
-  </tr>
-  <tr>
-    <th>First Name</th>
-    <td><%= @student.first_name %></td>
-  </tr>
-  <tr>
-    <th>Last Name</th>
-    <td><%= @student.last_name %></td>
-  </tr>
-  <tr>
-    <th>Year</th>
-    <td><%= @student.year %></td>
-  </tr>
-  <tr>
-    <th>Gender</th>
-    <td><%= @student.gender %></td>
-  </tr>
-  <tr>
-    <th>Major</th>
-    <td><%= @student.major %></td>
-  </tr>
-  <tr>
-    <th>Notes URL</th>
-    <td>
-      <% if @student.notes_url.present? %>
-        <% begin %>
-          <% uri = URI.parse(@student.notes_url) %>
-          <% if uri.scheme && %w[http https].include?(uri.scheme) %>
-            <%= link_to "Notes", sanitize(@student.notes_url), target: "_blank", rel: "noopener noreferrer" %>
-          <% else %>
-            Invalid URL format
-          <% end %>
-        <% rescue URI::InvalidURIError %>
-          Invalid URL
-        <% end %>
-      <% else %>
-        None
-      <% end %>
-    </td>
-  </tr>
-  <tr>
-    <th>Living Area</th>
-    <td><%= @student.living_area.name %></td>
-  </tr>
-</table>
+  <div class="flex-1">
+    <table class="table">
+      <tbody>
+        <tr>
+          <th>Short Name</th>
+          <td><%= @student.short_name %></td>
+        </tr>
+        <tr>
+          <th>First Name</th>
+          <td><%= @student.first_name %></td>
+        </tr>
+        <tr>
+          <th>Last Name</th>
+          <td><%= @student.last_name %></td>
+        </tr>
+        <tr>
+          <th>Year</th>
+          <td><%= @student.year %></td>
+        </tr>
+        <tr>
+          <th>Gender</th>
+          <td><%= @student.gender %></td>
+        </tr>
+        <tr>
+          <th>Major</th>
+          <td><%= @student.major %></td>
+        </tr>
+        <tr>
+          <th>Notes URL</th>
+          <td>
+            <% if @student.notes_url.present? %>
+              <% begin %>
+                <% uri = URI.parse(@student.notes_url) %>
+                <% if uri.scheme && %w[http https].include?(uri.scheme) %>
+                  <%= link_to "Notes", sanitize(@student.notes_url), target: "_blank", rel: "noopener noreferrer" %>
+                <% else %>
+                  Invalid URL format
+                <% end %>
+              <% rescue URI::InvalidURIError %>
+                Invalid URL
+              <% end %>
+            <% else %>
+              None
+            <% end %>
+          </td>
+        </tr>
+        <tr>
+          <th>Living Area</th>
+          <td><%= @student.living_area.name %></td>
+        </tr>
+      </tbody>
+    </table>
 
 <h2>Advisor:  
 <%= @student.advisor.first_name %> <%= @student.advisor.last_name %><br>
@@ -74,23 +74,23 @@
 
 <h2>Events Signed Up For</h2>
 <% if @student.student_event_options.any? %>
-  <table border="1" style="border-collapse: collapse; width: 100%;">
+  <table class="table">
     <thead>
       <tr>
-        <th>Event Name</th>
         <th>Date</th>
-        <th>Event Option</th>
-        <th>Cost</th>
+        <th>Event Name</th>
+        <th>Option Selected</th>
+        <th class="text-right">Cost</th>
       </tr>
     </thead>
     <tbody>
       <% @student.student_event_options.each do |student_event| %>
         <% if student_event.event_option.present? %>
           <tr>
-            <td><%= student_event.event.name %></td>
             <td><%= student_event.event.date.strftime("%A, %B %d, %Y") %></td>
+            <td><%= student_event.event.name %></td>
             <td><%= student_event.event_option.description %></td>
-            <td><%= number_to_currency(student_event.event_option.cost, unit: "$") %></td>
+            <td class="text-right"><%= number_to_currency(student_event.event_option.cost, unit: "$") %></td>
           </tr>
         <% end %>
       <% end %>

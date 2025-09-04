@@ -1,11 +1,11 @@
-<table class="table">
+<table class="table table-auto">
   <thead>
     <tr>
-      <th>Event Date (Event Name)</th>
-      <th>Summary of Signups</th>
-      <th>Missing Students</th>
+      <th class="w-auto">Event Date (Event Name)</th>
+      <th class="w-auto">Summary of Signups</th>
+      <th class="w-auto text-right">Missing Students</th>
       <% if params[:admin_view] == 'true' && admin_user? %>
-        <th>Actions</th>
+        <th class="w-auto">Actions</th>
       <% end %>
     </tr>
   </thead>
@@ -26,7 +26,7 @@
         </ul>
         </td>
   <!-- Missing Students -->
-        <td>
+        <td class="text-right">
           <% total_students = Student.count %>
           <% signed_up_students = StudentEventOption.where(event_id: event.id).distinct.count(:student_id) %>
           <%= total_students - signed_up_students %>

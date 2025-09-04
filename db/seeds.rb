@@ -36,24 +36,38 @@ CSV.foreach("db/students.tdf", col_sep: "\t", headers: true, header_converters: 
   normalized = row.to_h.transform_values { |v| v == '0' ? '' : v }
 
   begin
+    # Find the living area
+    living_area = LivingArea.find_or_create_by(name: normalized[:living_area])
+    
+    # Find the room within that living area if room is specified
+    room = nil
+    if normalized[:room].present?
+      room = Room.find_by(living_area: living_area, room_number: normalized[:room])
+      if room.nil?
+        puts "Warning: Room #{normalized[:room]} not found in #{normalized[:living_area]} for student #{normalized[:short_name]}"
+      end
+    end
+
     Student.find_or_create_by!(
       first_name:     normalized[:first],
       last_name:      normalized[:last],
       short_name:     normalized[:short_name],
       year:           normalized[:year],
       notes_url:      normalized[:url],
-      gender:         normalized[:gender],
+      gender:         normalized[:gender].upcase,
       major:          normalized[:major],
       parent_email:   normalized[:parent_email],
       advisor_id:     Advisor.find_or_create_by(last_name: normalized[:advisor]).id,
-      living_area_id: LivingArea.find_or_create_by(name: normalized[:living_area]).id
+      living_area_id: living_area.id,
+      room_id:        room&.id
     )
   rescue ActiveRecord::RecordInvalid => e
     puts "Error creating student: #{e.message}: #{normalized[:short_name]} #{normalized[:living_area]} #{normalized[:advisor]}"
   end
 end
 
-today = Date.today + ((5 - Date.today.wday) % 7)
+puts "seeding sample events"
+load Rails.root.join('db', 'seed_sample_events.rb')
 
 # Assign Random EventOptions to Students
 Student.all.each do |student|
@@ -85,6 +99,8 @@ end
 # radomally delete 15 student life event selections to simulate students not signing up for events
 StudentEventOption.all.sample(15).each { |seo| seo.destroy }
 
+
+
 puts "Database seeding completed!"
 
-load Rails.root.join('script', 'add_admin_user.rb') unless Rails.env.development?
+load Rails.root.join('script', 'add_admin_users.rb') unless Rails.env.development?

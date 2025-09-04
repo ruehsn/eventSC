@@ -6,14 +6,14 @@
 <h2>Students Grouped by Living Area </h2>
 
 <% if LivingArea.any? || @missing_students.any? %>
-  <table class="table">
+  <table class="table table-auto">
     <thead>
       <tr>
-        <th>Living Area</th>
+        <th class="w-auto">Living Area</th>
         <% @students_by_living_area_and_option.keys.map(&:last).uniq.sort_by(&:id).each do |event_option| %>
-          <th><%= event_option.description %> <%= display_event_option_cost(event_option)%> </th>
+          <th class="w-auto"><%= event_option.description %> <%= display_event_option_cost(event_option)%> </th>
         <% end %>
-        <% if @missing_students.any? %> <th>Missing Students</th> <% end %>
+        <% if @missing_students.any? %> <th class="w-auto">Missing Students</th> <% end %>
       </tr>
     </thead>
     <tbody>

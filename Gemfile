@@ -56,6 +56,7 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
 end
 
 group :development do
@@ -63,6 +64,9 @@ group :development do
   gem "web-console"
   gem "rails_live_reload"
   # gem 'mailcatcher', require: false #install manually
+  
+  # AI browser aware development
+  gem "tidewave"
 end
 
 group :test do

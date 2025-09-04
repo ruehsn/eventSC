@@ -7,7 +7,7 @@ class Student < ApplicationRecord
     has_many :event_options, through: :student_event_options
     
     has_one_attached :photo do |attachable|
-      attachable.variant :thumbnail, resize_to_limit: [100, 100]
+      attachable.variant :thumbnail, resize_to_fill: [192, 192]
       attachable.variant :small, resize_to_limit: [40, 40]
       attachable.variant :headshot, resize_to_limit: [300, 400]
     end
