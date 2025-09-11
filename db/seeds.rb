@@ -56,7 +56,7 @@ CSV.foreach("db/students.tdf", col_sep: "\t", headers: true, header_converters: 
       notes_url:      normalized[:url],
       gender:         normalized[:gender].upcase,
       major:          normalized[:major],
-      parent_email:   normalized[:parent_email],
+      # parent_email:   normalized[:parent_email],
       advisor_id:     Advisor.find_or_create_by(last_name: normalized[:advisor]).id,
       living_area_id: living_area.id,
       room_id:        room&.id
@@ -66,41 +66,46 @@ CSV.foreach("db/students.tdf", col_sep: "\t", headers: true, header_converters: 
   end
 end
 
-puts "seeding sample events"
-load Rails.root.join('db', 'seed_sample_events.rb')
-
-# Assign Random EventOptions to Students
-Student.all.each do |student|
-  Event.all.each do |event|
-    event_options = event.event_options
-    off_campus_option = event_options.find { |eo| eo.description =~ /Off Campus/i }
-    other_options = event_options.reject { |eo| eo.description =~ /Off Campus/i }
-
-    # Assign Off Campus to 10% of students, others get a random non-Off Campus option
-    if off_campus_option && rand < 0.1
-      StudentEventOption.find_or_create_by!(student_id: student.id, event_id: event.id, event_option_id: off_campus_option.id)
-    else
-      random_option = other_options.sample
-      # Only assign if there is a non-Off Campus option
-      if random_option
-        StudentEventOption.find_or_create_by!(student_id: student.id, event_id: event.id, event_option_id: random_option.id)
-      end
-    end
+if !Rails.env.production?
+  seed_sample_events()
+  
+  puts "Assigning student life holds cash to 20% of students..."
+  students = Student.all.to_a
+  students.sample((students.size * 0.2).ceil).each do |student|
+    student.update!(student_life_holds_cash: true)
+    puts "Updated student #{student.short_name} to student life holds cash."
   end
+
+  puts "Randomly delete 15 student life event selections to simulate students not signing up for events"
+  StudentEventOption.all.sample(15).each { |seo| seo.destroy }
 end
-
-# Randomly assign `student_life_holds_cash` to true for 20% of students
-students = Student.all.to_a
-students.sample((students.size * 0.2).ceil).each do |student|
-  student.update!(student_life_holds_cash: true)
-  puts "Updated student #{student.short_name} to student life holds cash."
-end
-
-# radomally delete 15 student life event selections to simulate students not signing up for events
-StudentEventOption.all.sample(15).each { |seo| seo.destroy }
-
-
 
 puts "Database seeding completed!"
 
 load Rails.root.join('script', 'add_admin_users.rb') unless Rails.env.development?
+
+
+def seed_sample_events()
+  puts "seeding sample events"
+  load Rails.root.join('db', 'seed_sample_events.rb')
+
+  # Assign Random EventOptions to Students
+  Student.all.each do |student|
+    Event.all.each do |event|
+      event_options = event.event_options
+      off_campus_option = event_options.find { |eo| eo.description =~ /Off Campus/i }
+      other_options = event_options.reject { |eo| eo.description =~ /Off Campus/i }
+
+      # Assign Off Campus to 10% of students, others get a random non-Off Campus option
+      if off_campus_option && rand < 0.1
+        StudentEventOption.find_or_create_by!(student_id: student.id, event_id: event.id, event_option_id: off_campus_option.id)
+      else
+        random_option = other_options.sample
+        # Only assign if there is a non-Off Campus option
+        if random_option
+          StudentEventOption.find_or_create_by!(student_id: student.id, event_id: event.id, event_option_id: random_option.id)
+        end
+      end
+    end
+  end
+end

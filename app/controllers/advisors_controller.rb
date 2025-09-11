@@ -10,6 +10,10 @@ class AdvisorsController < ApplicationController
   # GET /advisors/1 or /advisors/1.json
   def show
     @advisor = Advisor.includes(students: :student_event_options).find(params[:id])
+    @students = Student.where(advisor: @advisor)
+                      .order(:first_name)
+      # Preload upcoming events with "yes" options selected by any of this advisor's students
+
     @upcoming_events = Event.upcoming
                          .joins(:event_options)
                          .merge(EventOption.yes_options)

@@ -1,5 +1,9 @@
 Next Actions
 ======================================
+- sort student list under advisor by first name
+- after http://127.0.0.1:3000/students/4/event_signup return to previous page after saving 
+
+
 ✓ COMPLETED: Fixed SECRET_KEY_BASE security warning - moved from fly.toml to Fly.io secrets (08/28/2025)
 
 Hide Student Edit/Delete actions Actions

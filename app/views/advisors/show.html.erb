@@ -21,7 +21,7 @@
     </tr>
   </thead>
   <tbody>
-    <% @advisor.students.each do |student| %>
+    <% @students.each do |student| %>
       <tr>
         <td><%= "#{student.first_name} #{student.last_name}" %></td>
         <td><%= link_to "Event Signup", event_signup_student_path(student) %></td>

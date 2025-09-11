@@ -88,13 +88,21 @@ class StudentsController < ApplicationController
       if ! Rails.env.production?
         ParentMailer.event_signup_confirmation(@student, Current.user.email).deliver_now
       else
-        ParentMailer.event_signup_confirmation(@student).deliver_now
+        # TODO: Re-enable once prod SMTP service is established
+        # ParentMailer.event_signup_confirmation(@student).deliver_now
         # DelayedParentEmailService.schedule_email(@student)
-        # redirect_to student_path(@student), notice: "Event selections saved. Parent email will be sent in 2 hours."
+        # note: in production we delay/skip sending until SMTP is configured
       end
-      redirect_to student_path(@student), notice: "Event selections saved. Parent email has been sent."
+    end
+
+    # After saving, return the user to the referring page when possible.
+    # `event_signup` stores the referer in session[:return_to]. Use redirect_back with a sensible fallback.
+    return_to = session.delete(:return_to)
+    notice_msg = "Event selections saved."
+    if return_to.present?
+      redirect_to return_to, notice: notice_msg
     else
-      redirect_to student_path(@student), notice: "Event selections saved."
+      redirect_back fallback_location: student_path(@student), notice: notice_msg
     end
   end
 
