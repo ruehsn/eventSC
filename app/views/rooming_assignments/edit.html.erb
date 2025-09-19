@@ -49,7 +49,7 @@
     flex-direction: column;
     padding: 12px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    min-width: 80px;
+    min-width: 120px;
     min-height: 120px;
     transition: all 0.2s ease;
   }
@@ -72,7 +72,6 @@
   
   .room-header {
     font-weight: bold;
-    font-size: 12px;
     margin-bottom: 4px;
     text-align: center;
     color: #495057;
@@ -333,8 +332,8 @@
                data-capacity="<%= room.capacity %>"
                style="left: <%= room.x_position %>px; top: <%= room.y_position %>px; width: <%= room.capacity * 80 %>px; height: 120px;">
             
-            <div class="room-header">
-              Room <%= room.room_number %>
+            <div class="room-header text-lg">
+              <%= room.room_number %>
             </div>
             
             <div class="room-students" data-room-id="<%= room.id %>">

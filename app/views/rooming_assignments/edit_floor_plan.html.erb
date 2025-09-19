@@ -52,6 +52,7 @@
     cursor: move;
     transition: all 0.2s ease;
     user-select: none;
+    min-width: 120px;
   }
   
   .editable-room:hover {
@@ -73,7 +74,6 @@
   
   .room-header {
     font-weight: bold;
-    font-size: 12px;
     margin-bottom: 4px;
     text-align: center;
     color: #495057;
@@ -196,14 +196,14 @@
                data-capacity="<%= room.capacity %>"
                style="left: <%= room.x_position %>px; top: <%= room.y_position %>px; width: <%= room.capacity * 80 %>px; height: 120px;">
             
-            <div class="room-header">
-              Room <%= room.room_number %> (<%= room.students.count %>/<%= room.capacity %>)
+            <div class="room-header text-lg">
+              <%= room.room_number %>
             </div>
 
             <div class="flex gap-2 w-full h-full items-center justify-center">
-              <button class="text-5xl border rounded-md h-5">-</button>
-              <div class="text-5xl font-medium"><%= room.capacity %></div>
-              <button class="text-5xl">+</button>
+              <button class="border rounded-md p-1 hover:bg-accent"><%= icon "minus", class: "size-6" %></button>
+              <div class="text-5xl font-medium mb-2"><%= room.capacity %></div>
+              <button class="border rounded-md p-1 hover:bg-accent"><%= icon "plus", class: "size-6" %></button>
             </div>
             
             <div class="coordinate-display" style="display: none;">
