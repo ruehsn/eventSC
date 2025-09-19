@@ -87,21 +87,6 @@
     pointer-events: none;
   }
   
-  .resize-handle {
-    position: absolute;
-    width: 12px;
-    height: 12px;
-    background: #007bff;
-    border: 1px solid #0056b3;
-    border-radius: 2px;
-    cursor: se-resize;
-  }
-  
-  .resize-handle.bottom-right {
-    bottom: -6px;
-    right: -6px;
-  }
-  
   .room-controls {
     background: white;
     border: 1px solid #dee2e6;
@@ -169,7 +154,6 @@
     <h3 class="font-semibold text-blue-800 dark:text-blue-200 mb-2">Floor Plan Editor:</h3>
     <ul class="text-sm text-blue-700 dark:text-blue-300 space-y-1">
       <li>• Drag rooms to reposition them on the floor plan</li>
-      <li>• Drag the blue resize handle in the bottom-right corner to resize rooms</li>
       <li>• Click on a room to see its details and coordinates</li>
       <li>• Use the toolbar options below for grid snapping and other tools</li>
       <li>• Click "Save Floor Plan" when finished</li>
@@ -210,10 +194,16 @@
                data-room-id="<%= room.id %>"
                data-room-number="<%= room.room_number %>"
                data-capacity="<%= room.capacity %>"
-               style="left: <%= room.x_position %>px; top: <%= room.y_position %>px; width: <%= room.width %>px; height: <%= room.height %>px;">
+               style="left: <%= room.x_position %>px; top: <%= room.y_position %>px; width: <%= room.capacity * 80 %>px; height: 120px;">
             
             <div class="room-header">
               Room <%= room.room_number %> (<%= room.students.count %>/<%= room.capacity %>)
+            </div>
+
+            <div class="flex gap-2 w-full h-full items-center justify-center">
+              <button class="text-5xl border rounded-md h-5">-</button>
+              <div class="text-5xl font-medium"><%= room.capacity %></div>
+              <button class="text-5xl">+</button>
             </div>
             
             <div class="coordinate-display" style="display: none;">
@@ -221,8 +211,6 @@
               <br>
               <span class="width-coord"><%= room.width %></span>×<span class="height-coord"><%= room.height %></span>
             </div>
-            
-            <div class="resize-handle bottom-right"></div>
           </div>
         <% end %>
       </div>
@@ -239,19 +227,19 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div>
             <label class="block text-sm font-medium mb-1">X Position</label>
-            <input type="number" id="room-x" class="form-input w-full" step="10" min="0">
+            <input type="number" id="room-x" class="form-input w-full" min="0">
           </div>
           <div>
             <label class="block text-sm font-medium mb-1">Y Position</label>
-            <input type="number" id="room-y" class="form-input w-full" step="10" min="0">
+            <input type="number" id="room-y" class="form-input w-full" min="0">
           </div>
           <div>
             <label class="block text-sm font-medium mb-1">Width</label>
-            <input type="number" id="room-width" class="form-input w-full" step="10" min="80">
+            <input type="number" id="room-width" class="form-input w-full" min="80">
           </div>
           <div>
             <label class="block text-sm font-medium mb-1">Height</label>
-            <input type="number" id="room-height" class="form-input w-full" step="10" min="60">
+            <input type="number" id="room-height" class="form-input w-full" min="60">
           </div>
         </div>
         
@@ -280,10 +268,15 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeDragAndDrop);
+} else {
+  initializeDragAndDrop();
+}
+
+function initializeDragAndDrop() {
   let selectedRoom = null;
   let isDragging = false;
-  let isResizing = false;
   let dragStart = { x: 0, y: 0 };
   let initialPosition = { x: 0, y: 0 };
   let initialSize = { width: 0, height: 0 };
@@ -302,10 +295,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Room selection and dragging
     document.querySelectorAll('.editable-room').forEach(room => {
       room.addEventListener('mousedown', handleRoomMouseDown);
-      
-      // Resize handle
-      const resizeHandle = room.querySelector('.resize-handle');
-      resizeHandle.addEventListener('mousedown', handleResizeMouseDown);
     });
 
     // Global mouse events
@@ -346,8 +335,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function handleRoomMouseDown(e) {
-    if (e.target.classList.contains('resize-handle')) return;
-    
     e.preventDefault();
     const room = e.currentTarget;
     
@@ -365,25 +352,8 @@ document.addEventListener('DOMContentLoaded', function() {
     initialPosition.y = rect.top - floorPlanRect.top;
   }
 
-  function handleResizeMouseDown(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    const room = e.target.closest('.editable-room');
-    selectRoom(room);
-    
-    isResizing = true;
-    room.classList.add('dragging');
-    
-    const rect = room.getBoundingClientRect();
-    dragStart.x = e.clientX;
-    dragStart.y = e.clientY;
-    initialSize.width = rect.width;
-    initialSize.height = rect.height;
-  }
-
   function handleMouseMove(e) {
-    if (!isDragging && !isResizing) return;
+    if (!isDragging) return;
     
     e.preventDefault();
     
@@ -410,30 +380,6 @@ document.addEventListener('DOMContentLoaded', function() {
       updateCoordinateDisplay(selectedRoom, newX, newY);
       updateRoomInputs(selectedRoom);
     }
-    
-    if (isResizing && selectedRoom) {
-      const deltaX = e.clientX - dragStart.x;
-      const deltaY = e.clientY - dragStart.y;
-      
-      let newWidth = initialSize.width + deltaX;
-      let newHeight = initialSize.height + deltaY;
-      
-      // Snap to grid
-      if (snapToGrid) {
-        newWidth = Math.round(newWidth / 20) * 20;
-        newHeight = Math.round(newHeight / 20) * 20;
-      }
-      
-      // Minimum sizes
-      newWidth = Math.max(80, newWidth);
-      newHeight = Math.max(60, newHeight);
-      
-      selectedRoom.style.width = newWidth + 'px';
-      selectedRoom.style.height = newHeight + 'px';
-      
-      updateSizeDisplay(selectedRoom, newWidth, newHeight);
-      updateRoomInputs(selectedRoom);
-    }
   }
 
   function handleMouseUp(e) {
@@ -441,7 +387,6 @@ document.addEventListener('DOMContentLoaded', function() {
       selectedRoom.classList.remove('dragging');
     }
     isDragging = false;
-    isResizing = false;
   }
 
   function selectRoom(room) {
@@ -620,5 +565,5 @@ document.addEventListener('DOMContentLoaded', function() {
   if (snapToGrid) {
     floorPlan.classList.add('snap-grid');
   }
-});
+}
 </script>
