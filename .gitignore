@@ -86,3 +86,5 @@ fly.toml
 fly_preview.toml
 config/credentials.yml.enc.backup
 config/master.key.backup
+
+*:Zone.Identifier

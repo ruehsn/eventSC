@@ -66,25 +66,6 @@ CSV.foreach("db/students.tdf", col_sep: "\t", headers: true, header_converters: 
   end
 end
 
-if !Rails.env.production?
-  seed_sample_events()
-  
-  puts "Assigning student life holds cash to 20% of students..."
-  students = Student.all.to_a
-  students.sample((students.size * 0.2).ceil).each do |student|
-    student.update!(student_life_holds_cash: true)
-    puts "Updated student #{student.short_name} to student life holds cash."
-  end
-
-  puts "Randomly delete 15 student life event selections to simulate students not signing up for events"
-  StudentEventOption.all.sample(15).each { |seo| seo.destroy }
-end
-
-puts "Database seeding completed!"
-
-load Rails.root.join('script', 'add_admin_users.rb') unless Rails.env.development?
-
-
 def seed_sample_events()
   puts "seeding sample events"
   load Rails.root.join('db', 'seed_sample_events.rb')
@@ -109,3 +90,23 @@ def seed_sample_events()
     end
   end
 end
+
+if !Rails.env.production?
+  seed_sample_events()
+  
+  puts "Assigning student life holds cash to 20% of students..."
+  students = Student.all.to_a
+  students.sample((students.size * 0.2).ceil).each do |student|
+    student.update!(student_life_holds_cash: true)
+    puts "Updated student #{student.short_name} to student life holds cash."
+  end
+
+  puts "Randomly delete 15 student life event selections to simulate students not signing up for events"
+  StudentEventOption.all.sample(15).each { |seo| seo.destroy }
+end
+
+puts "Database seeding completed!"
+
+load Rails.root.join('script', 'add_admin_users.rb') unless Rails.env.development?
+
+
